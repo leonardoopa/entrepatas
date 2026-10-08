@@ -73,18 +73,35 @@
 
 {% if ofertas %}{% url 'loja:ofertas' as url_ofertas %}{% include "loja/_carrossel.html" with titulo="Ofertas imperdíveis" itens=ofertas link=url_ofertas %}{% endif %}
 
-<section class="banners">
-  {% for item in menu|slice:":2" %}
-    <a class="banner banner--{{ forloop.counter }}" href="{{ item.categoria.get_absolute_url }}">
-      <div>
-        <span>Tudo para</span>
-        <strong>{{ item.categoria.nome|lower }}</strong>
-        <em>Comprar agora ›</em>
+{% if cena %}
+<section class="cena" data-cena aria-labelledby="cena-titulo">
+  <div class="cena__palco">
+    <div class="cena__lado" aria-hidden="true">
+      {% for figura in cena.figuras_caes %}
+        <span class="figura" style="{{ figura.estilo }}"><span class="figura__corpo">{% include "loja/_cena_cachorro.html" with v=figura.variante %}</span></span>
+      {% endfor %}
+    </div>
+    <div class="cena__lado" aria-hidden="true">
+      {% for figura in cena.figuras_gatos %}
+        <span class="figura" style="{{ figura.estilo }}"><span class="figura__corpo">{% include "loja/_cena_gato.html" with v=figura.variante %}</span></span>
+      {% endfor %}
+    </div>
+    <div class="cena__centro">
+      <span class="cena__dica" aria-hidden="true">Role para baixo ↓</span>
+      <h2 id="cena-titulo">Tudo para cães e gatos</h2>
+      <p>A turma toda chegando para você.</p>
+      <a class="btn btn--grande cena__botao" href="{% url 'loja:busca' %}">Comprar agora</a>
+      <div class="cena__links">
+        <a href="{{ cena.caes.get_absolute_url }}">Só cães</a>
+        <a href="{{ cena.gatos.get_absolute_url }}">Só gatos</a>
       </div>
-      <b aria-hidden="true">{% include "loja/_icone_animal.html" with c=item.categoria %}</b>
-    </a>
-  {% endfor %}
+    </div>
+    <div class="cena__reprodutor" aria-hidden="true">
+      <span class="cena__trilho"><span class="cena__avanco"></span></span>
+    </div>
+  </div>
 </section>
+{% endif %}
 
 {% if mais_vendidos %}{% url 'loja:busca' as url_todos %}{% include "loja/_carrossel.html" with titulo="Mais vendidos" itens=mais_vendidos link=url_todos %}{% endif %}
 
