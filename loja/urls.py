@@ -1,8 +1,8 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, reverse_lazy
 
 from . import views
-from .forms import LoginForm
+from .forms import LoginForm, RecuperarSenhaForm
 
 app_name = "loja"
 
@@ -31,4 +31,32 @@ urlpatterns = [
         name="entrar",
     ),
     path("conta/sair/", auth_views.LogoutView.as_view(), name="sair"),
+    path(
+        "conta/senha/recuperar/",
+        auth_views.PasswordResetView.as_view(
+            template_name="loja/senha_recuperar.html",
+            form_class=RecuperarSenhaForm,
+            email_template_name="loja/email/senha_recuperar.txt",
+            subject_template_name="loja/email/senha_recuperar_assunto.txt",
+            success_url=reverse_lazy("loja:senha_enviada"),
+        ),
+        name="senha_recuperar",
+    ),
+    path(
+        "conta/senha/enviado/",
+        auth_views.PasswordResetDoneView.as_view(template_name="loja/senha_enviada.html"),
+        name="senha_enviada",
+    ),
+    path(
+        "conta/senha/redefinir/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="loja/senha_redefinir.html", success_url=reverse_lazy("loja:senha_concluida"),
+        ),
+        name="senha_redefinir",
+    ),
+    path(
+        "conta/senha/concluido/",
+        auth_views.PasswordResetCompleteView.as_view(template_name="loja/senha_concluida.html"),
+        name="senha_concluida",
+    ),
 ]

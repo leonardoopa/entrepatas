@@ -116,6 +116,13 @@ PRODUTOS = [
 class Command(BaseCommand):
     help = "Popula o banco com o catálogo fictício de demonstração (idempotente)."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--limpar", action="store_true",
+            help="Antes de popular, apaga produtos nunca vendidos que não fazem parte do catálogo de "
+                 "demonstração (inclusive os cadastrados no admin) e categorias/departamentos vazios.",
+        )
+
     def handle(self, *args, **options):
         animais = {}
         for ordem, (nome, emoji) in enumerate(ANIMAIS):
@@ -154,10 +161,10 @@ class Command(BaseCommand):
                 },
             )
 
-        # Remove sobras de catálogos de demonstração antigos (só o que nunca foi vendido).
-        Produto.objects.exclude(slug__in=slugs).filter(itempedido__isnull=True).delete()
-        Categoria.objects.exclude(slug__in=animais).filter(produtos__isnull=True).delete()
-        Departamento.objects.exclude(slug__in=deptos).filter(produtos__isnull=True).delete()
+        if options["limpar"]:
+            Produto.objects.exclude(slug__in=slugs).filter(itempedido__isnull=True).delete()
+            Categoria.objects.exclude(slug__in=animais).filter(produtos__isnull=True).delete()
+            Departamento.objects.exclude(slug__in=deptos).filter(produtos__isnull=True).delete()
 
         self.stdout.write(self.style.SUCCESS(
             f"{Categoria.objects.count()} animais, {Departamento.objects.count()} departamentos, "

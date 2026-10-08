@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.contrib.auth.password_validation import password_validators_help_text_html, validate_password
 
 from .models import Pedido
@@ -46,6 +46,12 @@ class LoginForm(AuthenticationForm):
 
     def clean_username(self):
         return self.cleaned_data["username"].lower()
+
+
+class RecuperarSenhaForm(PasswordResetForm):
+    email = forms.EmailField(
+        label="E-mail", max_length=EMAIL_MAX, widget=forms.EmailInput(attrs={"autocomplete": "email", "autofocus": True}),
+    )
 
 
 class CadastroForm(forms.Form):
