@@ -1,0 +1,81 @@
+{% if p.imagem %}<img src="{{ p.imagem.url }}" alt="{{ p.nome }}" loading="lazy">{% else %}<svg class="arte" viewBox="0 0 200 200" style="--c:{{ p.cor }}" role="img" aria-label="{{ p.nome }}">
+{% if p.tipo == "saco" %}
+<ellipse class="sh" cx="100" cy="188" rx="62" ry="6"/>
+<path class="c" d="M52 40H148L158 62V176Q158 184 150 184H50Q42 184 42 176V62Z"/>
+<rect class="c" x="52" y="32" width="96" height="16" rx="3"/>
+<rect class="sh" x="52" y="32" width="96" height="16" rx="3"/>
+<path class="sh" d="M52 40H148M52 44H148" stroke="#fff" stroke-width="1" fill="none"/>
+<rect class="hi" x="48" y="62" width="9" height="116" rx="4.5"/>
+<rect class="lb" x="60" y="82" width="80" height="72" rx="10"/>
+<text class="t1" x="100" y="104">{{ p.marca }}</text>
+<text x="100" y="140" text-anchor="middle" font-size="26">{{ p.categoria.emoji }}</text>
+{% elif p.tipo == "lata" %}
+<ellipse class="sh" cx="100" cy="188" rx="52" ry="6"/>
+<path class="c" d="M56 50V172A44 10 0 0 0 144 172V50Z"/>
+<ellipse class="c" cx="100" cy="50" rx="44" ry="10"/>
+<ellipse class="lb" cx="100" cy="50" rx="44" ry="10" opacity=".55"/>
+<rect class="lb" x="56" y="80" width="88" height="62"/>
+<text class="t1" x="100" y="104">{{ p.marca }}</text>
+<text x="100" y="130" text-anchor="middle" font-size="22">{{ p.categoria.emoji }}</text>
+<rect class="hi" x="62" y="56" width="8" height="112" rx="4"/>
+{% elif p.tipo == "frasco" %}
+<ellipse class="sh" cx="100" cy="188" rx="46" ry="6"/>
+<rect class="c" x="62" y="78" width="76" height="108" rx="16"/>
+<rect class="sh" x="82" y="62" width="36" height="20" rx="3"/>
+<rect class="nv" x="88" y="38" width="24" height="26" rx="4"/>
+<path class="nv" d="M92 42H130V52H112Z"/>
+<rect class="hi" x="68" y="92" width="8" height="84" rx="4"/>
+<rect class="lb" x="70" y="106" width="60" height="54" rx="8"/>
+<text class="t2" x="100" y="128">{{ p.marca }}</text>
+<text x="100" y="152" text-anchor="middle" font-size="20">{{ p.categoria.emoji }}</text>
+{% elif p.tipo == "bola" %}
+<ellipse class="sh" cx="100" cy="184" rx="52" ry="7"/>
+<circle class="c" cx="100" cy="102" r="68"/>
+<path d="M36 100Q100 52 164 100M36 106Q100 156 164 106" stroke="#fff" stroke-width="6" fill="none" opacity=".55"/>
+<ellipse class="lb" cx="72" cy="64" rx="18" ry="10" opacity=".4" transform="rotate(-35 72 64)"/>
+<rect class="lb" x="52" y="138" width="96" height="24" rx="12"/>
+<text class="t2" x="100" y="154">{{ p.marca }}</text>
+{% elif p.tipo == "osso" %}
+<ellipse class="sh" cx="100" cy="182" rx="68" ry="6"/>
+<g transform="rotate(-32 100 100)">
+<rect class="c" x="48" y="84" width="104" height="32" rx="14"/>
+<circle class="c" cx="48" cy="80" r="19"/><circle class="c" cx="48" cy="120" r="19"/>
+<circle class="c" cx="152" cy="80" r="19"/><circle class="c" cx="152" cy="120" r="19"/>
+<rect class="hi" x="62" y="88" width="76" height="6" rx="3"/>
+</g>
+<rect class="lb" x="52" y="150" width="96" height="24" rx="12"/>
+<text class="t2" x="100" y="166">{{ p.marca }}</text>
+{% elif p.tipo == "cama" %}
+<ellipse class="sh" cx="100" cy="176" rx="82" ry="10"/>
+<path class="c" d="M24 120Q24 78 100 78Q176 78 176 120V148Q176 172 100 172Q24 172 24 148Z"/>
+<ellipse class="sh" cx="100" cy="118" rx="58" ry="26"/>
+<ellipse class="hi" cx="100" cy="114" rx="52" ry="20"/>
+<text x="100" y="124" text-anchor="middle" font-size="36">{{ p.categoria.emoji }}</text>
+<path class="c" d="M24 128Q40 152 100 152Q160 152 176 128V148Q176 172 100 172Q24 172 24 148Z"/>
+<rect class="lb" x="66" y="140" width="68" height="20" rx="10"/>
+<text class="t2" x="100" y="154">{{ p.marca }}</text>
+{% elif p.tipo == "coleira" %}
+<ellipse class="sh" cx="100" cy="188" rx="46" ry="5"/>
+<ellipse cx="100" cy="94" rx="64" ry="56" fill="none" stroke-width="18" style="stroke:var(--c)"/>
+<ellipse cx="100" cy="94" rx="64" ry="56" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="4 6" opacity=".6"/>
+<rect class="nv" x="84" y="30" width="32" height="26" rx="5"/>
+<rect class="lb" x="92" y="36" width="16" height="14" rx="2"/>
+<circle cx="100" cy="164" r="19" fill="#F2B544"/>
+<text x="100" y="172" text-anchor="middle" font-size="20">🐾</text>
+{% elif p.tipo == "pote" %}
+<ellipse class="sh" cx="100" cy="176" rx="62" ry="8"/>
+<path class="c" d="M28 90H172Q166 158 132 168H68Q34 158 28 90Z"/>
+<ellipse class="c" cx="100" cy="90" rx="72" ry="18"/>
+<ellipse class="sh" cx="100" cy="92" rx="60" ry="12"/>
+<rect class="lb" x="62" y="120" width="76" height="26" rx="13"/>
+<text class="t2" x="100" y="137">{{ p.marca }}</text>
+{% else %}
+<ellipse class="sh" cx="100" cy="188" rx="60" ry="6"/>
+<rect class="c" x="44" y="56" width="112" height="128" rx="10"/>
+<rect class="sh" x="44" y="56" width="112" height="28" rx="10"/>
+<rect class="hi" x="50" y="92" width="8" height="84" rx="4"/>
+<rect class="lb" x="62" y="98" width="76" height="66" rx="8"/>
+<text class="t2" x="100" y="120">{{ p.marca }}</text>
+<text x="100" y="152" text-anchor="middle" font-size="24">{{ p.categoria.emoji }}</text>
+{% endif %}
+</svg>{% endif %}

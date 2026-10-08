@@ -1,0 +1,95 @@
+{% extends "loja/base.html" %}
+{% block title %}{{ titulo }} — EntrePatas{% endblock %}
+{% block content %}
+<nav class="migalhas" aria-label="Você está em"><a href="{% url 'loja:home' %}">Início</a> › {{ titulo }}</nav>
+
+<div class="lista__cabecalho">
+  <div>
+    <h1>{{ titulo }}</h1>
+    <p class="lista__total">{{ total }} produto{{ total|pluralize }}</p>
+  </div>
+  <div class="lista__acoes">
+    <button type="button" class="btn btn--contorno lista__filtrar" data-filtros-toggle>Filtrar</button>
+    <label class="ordenar">Ordenar por
+      <select name="ordem" form="filtros" data-auto-enviar>
+        {% for valor, rotulo in ordenacoes %}<option value="{{ valor }}" {% if ordem == valor %}selected{% endif %}>{{ rotulo }}</option>{% endfor %}
+      </select>
+    </label>
+  </div>
+</div>
+
+<div class="lista">
+  <aside class="filtros" data-filtros>
+    <form id="filtros" method="get" action="{{ request.path }}">
+      {% if termo %}<input type="hidden" name="q" value="{{ termo }}">{% endif %}
+
+      {% if facet_animais|length > 1 %}
+        <fieldset>
+          <legend>Animal</legend>
+          {% for c in facet_animais %}
+            <label class="opcao"><input type="checkbox" name="animal" value="{{ c.slug }}" {% if c.slug in sel_animais %}checked{% endif %} data-auto-enviar> {{ c.emoji }} {{ c.nome }}</label>
+          {% endfor %}
+        </fieldset>
+      {% endif %}
+
+      {% if facet_deptos|length > 1 %}
+        <fieldset>
+          <legend>Departamento</legend>
+          {% for d in facet_deptos %}
+            <label class="opcao"><input type="checkbox" name="depto" value="{{ d.slug }}" {% if d.slug in sel_deptos %}checked{% endif %} data-auto-enviar> {{ d.nome }}</label>
+          {% endfor %}
+        </fieldset>
+      {% endif %}
+
+      {% if facet_marcas|length > 1 %}
+        <fieldset>
+          <legend>Marca</legend>
+          {% for m in facet_marcas %}
+            <label class="opcao"><input type="checkbox" name="marca" value="{{ m }}" {% if m in sel_marcas %}checked{% endif %} data-auto-enviar> {{ m }}</label>
+          {% endfor %}
+        </fieldset>
+      {% endif %}
+
+      <fieldset>
+        <legend>Preço</legend>
+        {% for valor, rotulo in faixas %}
+          <label class="opcao"><input type="radio" name="faixa" value="{{ valor }}" {% if faixa == valor %}checked{% endif %} data-auto-enviar> {{ rotulo }}</label>
+        {% endfor %}
+      </fieldset>
+
+      <fieldset>
+        <legend>Promoção</legend>
+        <label class="opcao"><input type="checkbox" name="promo" value="1" {% if promo %}checked{% endif %} data-auto-enviar> Somente em oferta</label>
+      </fieldset>
+
+      <div class="filtros__acoes">
+        <button class="btn btn--bloco" type="submit">Aplicar filtros</button>
+        {% if filtros_ativos %}<a class="filtros__limpar" href="{{ request.path }}{% if termo %}?q={{ termo|urlencode }}{% endif %}">Limpar filtros</a>{% endif %}
+      </div>
+    </form>
+  </aside>
+
+  <section class="lista__resultados">
+    {% if pagina %}
+      <div class="grade">{% for p in pagina %}{% include "loja/_card.html" %}{% endfor %}</div>
+
+      {% if pagina.paginator.num_pages > 1 %}
+        <nav class="paginacao" aria-label="Paginação">
+          {% if pagina.has_previous %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}pagina={{ pagina.previous_page_number }}" rel="prev">‹ Anterior</a>{% endif %}
+          {% for n in pagina.paginator.page_range %}
+            {% if n == pagina.number %}<span aria-current="page">{{ n }}</span>
+            {% else %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}pagina={{ n }}">{{ n }}</a>{% endif %}
+          {% endfor %}
+          {% if pagina.has_next %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}pagina={{ pagina.next_page_number }}" rel="next">Próxima ›</a>{% endif %}
+        </nav>
+      {% endif %}
+    {% else %}
+      <div class="vazio vazio--centro">
+        <span class="vazio__emoji">🔎</span>
+        <p>Nenhum produto encontrado.</p>
+        {% if filtros_ativos %}<a class="btn" href="{{ request.path }}{% if termo %}?q={{ termo|urlencode }}{% endif %}">Limpar filtros</a>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

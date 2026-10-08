@@ -1,0 +1,56 @@
+{% comment %}Carinha ilustrada do animal. Uso: {% include "loja/_icone_animal.html" with c=categoria %}{% endcomment %}
+{% if c.slug == "caes" %}
+<svg class="icone-animal" viewBox="0 0 48 48" aria-hidden="true">
+  <ellipse cx="8" cy="25" rx="7" ry="13" fill="#b4502f" transform="rotate(12 8 25)"/>
+  <ellipse cx="40" cy="25" rx="7" ry="13" fill="#b4502f" transform="rotate(-12 40 25)"/>
+  <circle cx="24" cy="25" r="16" fill="#d96c4a"/>
+  <ellipse cx="24" cy="33" rx="9.5" ry="7" fill="#f6c2ac"/>
+  <ellipse cx="24" cy="29.5" rx="3.4" ry="2.6" fill="#2b1a14"/>
+  <path d="M24 32v3M21 36q3 2 6 0" stroke="#2b1a14" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <circle cx="17" cy="21" r="4.2" fill="#fff"/><circle cx="18.2" cy="21.6" r="2.3" fill="#1c2333"/>
+  <circle cx="31" cy="21" r="4.2" fill="#fff"/><circle cx="32.2" cy="21.6" r="2.3" fill="#1c2333"/>
+</svg>
+{% elif c.slug == "gatos" %}
+<svg class="icone-animal" viewBox="0 0 48 48" aria-hidden="true">
+  <polygon points="6,22 9,4 22,13" fill="#c28a52"/><polygon points="42,22 39,4 26,13" fill="#c28a52"/>
+  <polygon points="10,18 11,9 18,14" fill="#f2b7a0"/><polygon points="38,18 37,9 30,14" fill="#f2b7a0"/>
+  <ellipse cx="24" cy="27" rx="18" ry="16" fill="#d9a56d"/>
+  <ellipse cx="24" cy="34" rx="8" ry="5.5" fill="#f3d9b8"/>
+  <polygon points="21.5,30 26.5,30 24,33" fill="#d9657f"/>
+  <path d="M24 33v2M21 36q3 2 6 0" stroke="#4a2e1a" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <path d="M4 30l10 2M4 35l10-1M44 30l-10 2M44 35l-10-1" stroke="#4a2e1a" stroke-width="1" stroke-linecap="round"/>
+  <circle cx="16.5" cy="23" r="4.2" fill="#fff"/><ellipse cx="17.4" cy="23.4" rx="1.6" ry="2.8" fill="#1c2333"/>
+  <circle cx="31.5" cy="23" r="4.2" fill="#fff"/><ellipse cx="32.4" cy="23.4" rx="1.6" ry="2.8" fill="#1c2333"/>
+</svg>
+{% elif c.slug == "passaros" %}
+<svg class="icone-animal" viewBox="0 0 48 48" aria-hidden="true">
+  <path d="M20 8q3-6 6 0M24 8q4-5 7 1" stroke="#a8486a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="24" cy="26" r="17" fill="#ce6a85"/>
+  <ellipse cx="22" cy="36" rx="11" ry="6" fill="#e9a2b5"/>
+  <polygon points="34,24 46,28 34,33" fill="#f2b544"/>
+  <path d="M34 28.5h10" stroke="#c9922d" stroke-width="1"/>
+  <circle cx="26" cy="21" r="5.2" fill="#fff"/><circle cx="27.4" cy="21.6" r="2.8" fill="#1c2333"/>
+</svg>
+{% elif c.slug == "peixes" %}
+<svg class="icone-animal" viewBox="0 0 48 48" aria-hidden="true">
+  <polygon points="34,24 47,12 47,36" fill="#6f5fa3"/>
+  <ellipse cx="23" cy="24" rx="19" ry="15" fill="#8e7dbe"/>
+  <path d="M16 8q8-2 14 4l-8 4z" fill="#6f5fa3"/>
+  <path d="M25 14q5 10 0 20" stroke="#6f5fa3" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M30 17q3 7 0 14" stroke="#6f5fa3" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <circle cx="13" cy="21" r="4.8" fill="#fff"/><circle cx="12.2" cy="21.6" r="2.6" fill="#1c2333"/>
+  <path d="M5 29q3 2 6 0" stroke="#4d3f7e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>
+{% elif c.slug == "roedores" %}
+<svg class="icone-animal" viewBox="0 0 48 48" aria-hidden="true">
+  <circle cx="11" cy="12" r="7.5" fill="#b98a5e"/><circle cx="37" cy="12" r="7.5" fill="#b98a5e"/>
+  <circle cx="11" cy="12" r="4" fill="#f2b7a0"/><circle cx="37" cy="12" r="4" fill="#f2b7a0"/>
+  <ellipse cx="24" cy="28" rx="19" ry="16" fill="#d7a97a"/>
+  <ellipse cx="24" cy="34" rx="10" ry="7" fill="#f5e2c8"/>
+  <ellipse cx="24" cy="29.5" rx="2.6" ry="2" fill="#d9657f"/>
+  <path d="M24 31.5v2M20.5 36q3.5 2.5 7 0" stroke="#4a2e1a" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <rect x="22.2" y="36" width="3.6" height="4" rx="1" fill="#fff" stroke="#4a2e1a" stroke-width=".8"/>
+  <circle cx="16.5" cy="24" r="3.8" fill="#fff"/><circle cx="17.3" cy="24.4" r="2.2" fill="#1c2333"/>
+  <circle cx="31.5" cy="24" r="3.8" fill="#fff"/><circle cx="32.3" cy="24.4" r="2.2" fill="#1c2333"/>
+</svg>
+{% else %}<span class="icone-animal icone-animal--emoji" aria-hidden="true">{{ c.emoji|default:"🐾" }}</span>{% endif %}

@@ -1,0 +1,115 @@
+{% load static %}<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}EntrePatas — tudo para o seu pet{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'loja/style.css' %}">
+  <script src="{% static 'loja/app.js' %}" defer></script>
+</head>
+<body data-url-sugestoes="{% url 'loja:sugestoes' %}" data-url-minicarrinho="{% url 'loja:minicarrinho' %}">
+  <div class="faixa">🚚 Frete grátis em compras acima de R$ {{ frete_gratis_acima|floatformat:"0g" }} &nbsp;·&nbsp; 💳 Parcele em até 10x sem juros</div>
+
+  <header class="topo">
+    <div class="container topo__linha">
+      <button class="menu-btn" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-toggle>☰</button>
+      <a class="logo" href="{% url 'loja:home' %}" aria-label="EntrePatas, página inicial">Entre<span>Patas</span></a>
+      <form class="busca" role="search" action="{% url 'loja:busca' %}" method="get">
+        <input type="search" name="q" value="{{ termo|default:'' }}" placeholder="O que seu pet precisa?" aria-label="Buscar produtos" autocomplete="off" data-busca>
+        <button type="submit" aria-label="Buscar">🔍</button>
+        <div class="sugestoes" data-sugestoes hidden></div>
+      </form>
+      {% if user.is_authenticated %}
+        <div class="conta-menu">
+          <a class="conta-link" href="{% url 'loja:conta' %}">
+            <span class="conta-link__icone">👤</span>
+            <span class="rotulo"><small>Olá,</small> {{ user.first_name|default:"cliente" }}</span>
+          </a>
+          <div class="conta-menu__painel">
+            <a href="{% url 'loja:conta' %}">Meus pedidos</a>
+            <form method="post" action="{% url 'loja:sair' %}">{% csrf_token %}<button type="submit">Sair</button></form>
+          </div>
+        </div>
+      {% else %}
+        <a class="conta-link" href="{% url 'loja:entrar' %}">
+          <span class="conta-link__icone">👤</span>
+          <span class="rotulo"><small>Entrar</small> Cadastre-se</span>
+        </a>
+      {% endif %}
+      <a class="carrinho-link" href="{% url 'loja:carrinho' %}" data-abrir-carrinho aria-label="Abrir carrinho">
+        <span class="carrinho-link__icone">🛒<span class="badge" data-carrinho-qtd{% if not carrinho_qtd %} hidden{% endif %}>{{ carrinho_qtd }}</span></span>
+        <span class="rotulo">Carrinho</span>
+      </a>
+    </div>
+    <nav class="menu" data-menu aria-label="Categorias">
+      <ul class="container menu__linha">
+        {% for item in menu %}
+          <li class="menu__item" data-animal="{{ item.categoria.slug }}">
+            <a href="{{ item.categoria.get_absolute_url }}">
+              <span class="menu__icone">{% include "loja/_icone_animal.html" with c=item.categoria %}</span>
+              <span class="menu__nome">{{ item.categoria.nome }}</span>
+            </a>
+            {% if item.departamentos %}
+              <div class="mega">
+                <ul>
+                  {% for d in item.departamentos %}
+                    <li><a href="{{ item.categoria.get_absolute_url }}?depto={{ d.slug }}">{{ d.nome }}</a></li>
+                  {% endfor %}
+                  <li class="mega__ver"><a href="{{ item.categoria.get_absolute_url }}">Ver tudo para {{ item.categoria.nome|lower }}</a></li>
+                </ul>
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+        <li class="menu__item menu__item--ofertas"><a href="{% url 'loja:ofertas' %}">🔥 Ofertas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% if messages %}
+      <ul class="mensagens">
+        {% for m in messages %}<li class="mensagem mensagem--{{ m.tags }}">{{ m }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="rodape">
+    <div class="container rodape__grade">
+      <div>
+        <a class="logo logo--rodape" href="{% url 'loja:home' %}">Entre<span>Patas</span></a>
+        <p>Tudo para o seu pet, com carinho.</p>
+        <p class="rodape__aviso">Loja de demonstração. Produtos, marcas e avaliações são fictícios.</p>
+      </div>
+      <div>
+        <h3>Compre por animal</h3>
+        <ul>{% for item in menu %}<li><a href="{{ item.categoria.get_absolute_url }}">{{ item.categoria.nome }}</a></li>{% endfor %}</ul>
+      </div>
+      <div>
+        <h3>Departamentos</h3>
+        <ul>{% for d in menu_departamentos %}<li><a href="{{ d.get_absolute_url }}">{{ d.nome }}</a></li>{% endfor %}</ul>
+      </div>
+      <div>
+        <h3>Vantagens</h3>
+        <ul>
+          <li>Frete grátis acima de R$ {{ frete_gratis_acima|floatformat:"0g" }}</li>
+          <li>Até 10x sem juros</li>
+          <li><a href="{% url 'loja:ofertas' %}">Ofertas da semana</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rodape__fim">© EntrePatas</div>
+  </footer>
+
+  <div class="gaveta-fundo" data-gaveta-fechar hidden></div>
+  <aside class="gaveta" data-gaveta aria-label="Carrinho" aria-hidden="true">
+    <div class="gaveta__cab">
+      <h2>Meu carrinho</h2>
+      <button type="button" class="gaveta__fechar" aria-label="Fechar carrinho" data-gaveta-fechar>✕</button>
+    </div>
+    <div class="gaveta__corpo" data-gaveta-corpo></div>
+  </aside>
+  <div class="toasts" aria-live="polite" data-toasts></div>
+</body>
+</html>

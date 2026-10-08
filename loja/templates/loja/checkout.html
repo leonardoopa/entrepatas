@@ -1,0 +1,30 @@
+{% extends "loja/base.html" %}
+{% block title %}Finalizar compra — EntrePatas{% endblock %}
+{% block content %}
+<h1>Finalizar compra</h1>
+<div class="checkout">
+  <form method="post" class="form">
+    {% csrf_token %}
+    <h2>Dados de entrega</h2>
+    {{ form.as_p }}
+    <button class="btn btn--grande" type="submit">Confirmar pedido</button>
+  </form>
+  <aside class="resumo">
+    <h2>Resumo do pedido</h2>
+    <ul class="resumo__itens">
+      {% for p, qtd, linha in linhas %}
+        <li>
+          <span class="resumo__arte">{% include "loja/_arte.html" %}</span>
+          <span>{{ qtd }}× {{ p.nome }}</span>
+          <strong>R$ {{ linha|floatformat:"2g" }}</strong>
+        </li>
+      {% endfor %}
+    </ul>
+    <dl class="totais">
+      <div><dt>Subtotal</dt><dd>R$ {{ subtotal|floatformat:"2g" }}</dd></div>
+      <div><dt>Frete</dt><dd>{% if frete_gratis %}Grátis{% else %}R$ {{ frete|floatformat:"2g" }}{% endif %}</dd></div>
+      <div class="totais__total"><dt>Total</dt><dd>R$ {{ total|floatformat:"2g" }}</dd></div>
+    </dl>
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "loja/base.html" %}
+{% block title %}{{ produto.nome }} — EntrePatas{% endblock %}
+{% block content %}
+<nav class="migalhas" aria-label="Você está em">
+  <a href="{% url 'loja:home' %}">Início</a> ›
+  <a href="{{ produto.categoria.get_absolute_url }}">{{ produto.categoria.nome }}</a> ›
+  {% if produto.departamento %}<a href="{{ produto.categoria.get_absolute_url }}?depto={{ produto.departamento.slug }}">{{ produto.departamento.nome }}</a> ›{% endif %}
+  {{ produto.nome }}
+</nav>
+
+<section class="detalhe">
+  {% with p=produto %}
+  <div class="detalhe__arte">
+    {% include "loja/_arte.html" %}
+    {% if p.em_promocao %}<span class="selo selo--grande">-{{ p.desconto_percentual }}%</span>{% endif %}
+  </div>
+
+  <div class="detalhe__info">
+    {% if p.marca %}<a class="card__marca" href="{% url 'loja:busca' %}?marca={{ p.marca|urlencode }}">{{ p.marca }}</a>{% endif %}
+    <h1>{{ p.nome }}</h1>
+    {% if p.num_avaliacoes %}
+      <div class="avaliacao">
+        <span class="estrelas estrelas--grande" style="--p:{{ p.avaliacao_pct }}%" role="img" aria-label="Nota {{ p.avaliacao }} de 5">★★★★★</span>
+        <small>{{ p.avaliacao }} · {{ p.num_avaliacoes }} avaliações</small>
+      </div>
+    {% endif %}
+
+    <div class="preco preco--grande">
+      {% if p.em_promocao %}<s>De R$ {{ p.preco|floatformat:"2g" }}</s>{% endif %}
+      <strong>R$ {{ p.preco_final|floatformat:"2g" }}</strong>
+    </div>
+    {% with n=p.parcelas.0 v=p.parcelas.1 %}
+      {% if n > 1 %}<p class="parcela parcela--grande">ou {{ n }}x de <strong>R$ {{ v|floatformat:"2g" }}</strong> sem juros</p>{% endif %}
+    {% endwith %}
+
+    {% if p.estoque > 0 %}
+      <form method="post" action="{% url 'loja:carrinho_adicionar' p.pk %}" class="comprar" data-ajax-carrinho>
+        {% csrf_token %}
+        <div class="stepper" data-stepper>
+          <button type="button" data-step="-1" aria-label="Diminuir quantidade">−</button>
+          <input type="number" name="quantidade" value="1" min="1" max="{{ p.estoque }}" aria-label="Quantidade">
+          <button type="button" data-step="1" aria-label="Aumentar quantidade">+</button>
+        </div>
+        <button class="btn btn--grande" type="submit">Adicionar ao carrinho</button>
+      </form>
+      {% if p.estoque <= 5 %}<p class="aviso-estoque">Restam apenas {{ p.estoque }} unidade{{ p.estoque|pluralize }}!</p>{% endif %}
+      <ul class="beneficios">
+        <li>🚚 Frete grátis acima de R$ {{ frete_gratis_acima|floatformat:"0g" }}</li>
+        <li>🔄 Troca fácil em até 30 dias</li>
+      </ul>
+    {% else %}
+      <p class="esgotado esgotado--grande">Produto indisponível no momento.</p>
+    {% endif %}
+  </div>
+  {% endwith %}
+</section>
+
+<section class="abas" data-abas>
+  <div class="abas__lista" role="tablist">
+    <button type="button" role="tab" class="is-ativo" aria-selected="true" data-aba="descricao">Descrição</button>
+    <button type="button" role="tab" aria-selected="false" data-aba="detalhes">Detalhes</button>
+  </div>
+  <div class="abas__painel is-ativo" role="tabpanel" data-painel="descricao">
+    <p>{{ produto.descricao|default:"Sem descrição."|linebreaksbr }}</p>
+  </div>
+  <div class="abas__painel" role="tabpanel" data-painel="detalhes" hidden>
+    <dl class="ficha">
+      {% if produto.marca %}<div><dt>Marca</dt><dd>{{ produto.marca }}</dd></div>{% endif %}
+      <div><dt>Animal</dt><dd>{{ produto.categoria.nome }}</dd></div>
+      {% if produto.departamento %}<div><dt>Departamento</dt><dd>{{ produto.departamento.nome }}</dd></div>{% endif %}
+      <div><dt>Código</dt><dd>EP-{{ produto.pk|stringformat:"05d" }}</dd></div>
+    </dl>
+  </div>
+</section>
+
+{% if relacionados %}{% include "loja/_carrossel.html" with titulo="Você também pode gostar" itens=relacionados %}{% endif %}
+{% endblock %}

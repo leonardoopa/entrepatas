@@ -1,0 +1,7 @@
+<div class="frete-barra{% if frete_gratis %} frete-barra--ok{% endif %}">
+  <p>
+    {% if frete_gratis %}🎉 Você ganhou <strong>frete grátis</strong>!
+    {% else %}🚚 Faltam <strong>R$ {{ falta_frete|floatformat:"2g" }}</strong> para ganhar frete grátis.{% endif %}
+  </p>
+  <div class="frete-barra__trilho"><div class="frete-barra__preench" style="width:{{ progresso_frete }}%"></div></div>
+</div>

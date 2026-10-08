@@ -1,0 +1,15 @@
+{% extends "loja/base.html" %}
+{% block title %}Criar conta — EntrePatas{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>Criar conta</h1>
+  <p class="auth__sub">Use seu e-mail e uma senha para entrar sempre que quiser.</p>
+  <form method="post" class="form">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {{ form.as_p }}
+    <button class="btn btn--bloco btn--grande" type="submit">Criar conta</button>
+  </form>
+  <p class="auth__troca">Já tem conta? <a href="{% url 'loja:entrar' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Entrar</a></p>
+</section>
+{% endblock %}
