@@ -1,8 +1,8 @@
-"""Settings do EntrePatas. Valores sensíveis vêm de variáveis de ambiente (veja .env.example)."""
-
 import os
 from decimal import Decimal
 from pathlib import Path
+
+from .logging_config import montar_logging
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,19 +13,15 @@ def env_lista(nome, padrao=""):
 
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 
-# Em produção defina DJANGO_SECRET_KEY; em DEBUG usa chave de desenvolvimento.
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or (
     "dev-only-insecure-key" if DEBUG else None
 )
 if not SECRET_KEY:
     raise RuntimeError("Defina DJANGO_SECRET_KEY quando DJANGO_DEBUG=0.")
 
-# Ex.: DJANGO_ALLOWED_HOSTS="www.entrepatas.com.br,entrepatas.com.br"
 ALLOWED_HOSTS = env_lista("DJANGO_ALLOWED_HOSTS")
-# Ex.: DJANGO_CSRF_TRUSTED_ORIGINS="https://www.entrepatas.com.br"
 CSRF_TRUSTED_ORIGINS = env_lista("DJANGO_CSRF_TRUSTED_ORIGINS")
 
-# Site atrás de HTTPS (proxy reverso): cookies seguros e cabeçalho do proxy.
 if os.environ.get("DJANGO_HTTPS") == "1":
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     USE_X_FORWARDED_HOST = True
@@ -65,8 +61,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "loja.context_processors.carrinho",
-                "loja.context_processors.loja",
+                "loja.context_processors.carrinho_resumo",
+                "loja.context_processors.navegacao",
             ],
         },
     },
@@ -74,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# PostgreSQL quando POSTGRES_DB está definido (Docker); senão SQLite para uso local.
 if os.environ.get("POSTGRES_DB"):
     DATABASES = {
         "default": {
@@ -108,13 +103,11 @@ USE_I18N = True
 USE_THOUSAND_SEPARATOR = True
 USE_TZ = True
 
-# Contas de cliente.
 LOGIN_URL = "loja:entrar"
 LOGIN_REDIRECT_URL = "loja:conta"
 LOGOUT_REDIRECT_URL = "loja:home"
-PASSWORD_RESET_TIMEOUT = 60 * 60 * 2  # link de recuperação vale 2 horas
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 2
 
-# E-mail: SMTP se DJANGO_EMAIL_HOST estiver definido; senão imprime no console (docker compose logs web).
 EMAIL_HOST = os.environ.get("DJANGO_EMAIL_HOST", "")
 EMAIL_BACKEND = os.environ.get("DJANGO_EMAIL_BACKEND") or (
     "django.core.mail.backends.smtp.EmailBackend" if EMAIL_HOST
@@ -126,7 +119,6 @@ EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_PASSWORD", "")
 EMAIL_USE_TLS = os.environ.get("DJANGO_EMAIL_TLS", "1") == "1"
 DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "EntrePatas <nao-responda@entrepatas.local>")
 
-# Frete fixo, grátis a partir de um valor de compra.
 FRETE_FIXO = Decimal("19.90")
 FRETE_GRATIS_ACIMA = Decimal("199.00")
 
@@ -134,7 +126,6 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
-# Fotos enviadas pelo admin: servidas pelo próprio Django em DEBUG ou com DJANGO_SERVE_MEDIA=1.
 SERVE_MEDIA = DEBUG or os.environ.get("DJANGO_SERVE_MEDIA") == "1"
 
 STORAGES = {
@@ -143,3 +134,5 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGGING = montar_logging(os.environ.get("DJANGO_LOG_LEVEL", "INFO").upper())

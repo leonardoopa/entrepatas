@@ -10,6 +10,38 @@ Pet shop online feito com Python, Django e SQL (PostgreSQL no Docker, SQLite par
 - Contas de cliente: cadastro, login com e-mail e senha, recuperação de senha por e-mail e histórico de pedidos
 - Painel administrativo (`/admin/`) para produtos, categorias, departamentos e pedidos
 
+## Arquitetura
+
+```
+loja/
+  models/        entidades e regras simples do domínio (catalogo.py, pedidos.py)
+  selectors/     consultas de leitura (filtros, busca, menu, destaques)
+  services/      regras de negócio: carrinho, frete, resumo de compra, checkout, contas
+  views/         camada HTTP fina: lê a requisição, chama services/selectors, devolve a resposta
+  forms.py       validação de entrada
+  signals.py     logs de autenticação
+  templates/, static/loja/js/   interface (JavaScript em módulos, sem bibliotecas)
+config/          settings e configuração de logs
+```
+
+Regras de dependência: `views` dependem de `services` e `selectors`; `services` e `selectors` dependem de `models`; nada em `services` conhece `request`, `HttpResponse` ou templates.
+
+- **Responsabilidade única:** cada módulo faz uma coisa (o carrinho guarda itens, o resumo calcula totais, o checkout cria o pedido).
+- **Aberto/fechado e inversão de dependência:** o frete é uma `PoliticaFrete` injetada em `montar_resumo` e `finalizar_pedido`. Para outra regra de frete basta criar uma nova classe com `calcular()`, sem mexer nas views nem no checkout.
+- **Testes:** `loja/tests/` tem um módulo por área; os serviços são testados sem passar pelas views.
+
+## Logs
+
+Os logs vão para a saída padrão (`docker compose logs -f web`) no formato `data nível logger evento chave=valor`. O nível vem de `DJANGO_LOG_LEVEL` (padrão `INFO`; use `DEBUG` para ver cada alteração do carrinho).
+
+| Evento | Nível |
+| --- | --- |
+| `pedido_criado`, `usuario_criado`, `login_ok`, `logout`, `senha_redefinida`, `recuperacao_senha_solicitada`, `carrinho_produto_adicionado`, `busca_sem_resultado` | INFO |
+| `login_falhou`, `checkout_item_indisponivel`, `carrinho_produto_sem_estoque`, `pedido_acesso_negado`, `seed_limpeza` | WARNING |
+| `carrinho_item_definido`, `carrinho_item_removido` | DEBUG |
+
+Os logs guardam ids, IP e termos de busca sem resultado; nunca e-mails de contas, senhas ou tokens.
+
 ## Rodando com Docker (recomendado)
 
 Pré-requisito: Docker com Docker Compose.
