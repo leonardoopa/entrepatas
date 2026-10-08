@@ -4,9 +4,10 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.contrib.auth.password_validation import password_validators_help_text_html, validate_password
 
 from .models import Pedido
+from .services.contas import criar_usuario
 
 User = get_user_model()
-EMAIL_MAX = 150  # o e-mail é gravado no campo username (150 caracteres)
+EMAIL_MAX = 150
 
 
 class CheckoutForm(forms.ModelForm):
@@ -28,17 +29,13 @@ class CheckoutForm(forms.ModelForm):
 
 
 class LoginForm(AuthenticationForm):
-    """Login com e-mail e senha."""
-
     username = forms.EmailField(
         label="E-mail", max_length=EMAIL_MAX,
         widget=forms.EmailInput(attrs={"autofocus": True, "autocomplete": "email"}),
     )
     password = forms.CharField(
-        label="Senha", strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+        label="Senha", strip=False, widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
     )
-
     error_messages = {
         **AuthenticationForm.error_messages,
         "invalid_login": "E-mail ou senha incorretos.",
@@ -50,7 +47,8 @@ class LoginForm(AuthenticationForm):
 
 class RecuperarSenhaForm(PasswordResetForm):
     email = forms.EmailField(
-        label="E-mail", max_length=EMAIL_MAX, widget=forms.EmailInput(attrs={"autocomplete": "email", "autofocus": True}),
+        label="E-mail", max_length=EMAIL_MAX,
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "autofocus": True}),
     )
 
 
@@ -74,20 +72,22 @@ class CadastroForm(forms.Form):
 
     def clean(self):
         dados = super().clean()
-        senha, senha2 = dados.get("senha"), dados.get("senha2")
-        if senha and senha2 and senha != senha2:
+        senha, confirmacao = dados.get("senha"), dados.get("senha2")
+        if not senha:
+            return dados
+        if confirmacao and senha != confirmacao:
             self.add_error("senha2", "As senhas não são iguais.")
-        elif senha:
-            usuario = User(username=dados.get("email", ""), email=dados.get("email", ""),
-                           first_name=dados.get("nome", ""))
-            try:
-                validate_password(senha, usuario)
-            except forms.ValidationError as erro:
-                self.add_error("senha", erro)
+        elif confirmacao:
+            self._validar_forca(senha, dados)
         return dados
 
+    def _validar_forca(self, senha, dados):
+        candidato = User(username=dados.get("email", ""), email=dados.get("email", ""), first_name=dados.get("nome", ""))
+        try:
+            validate_password(senha, candidato)
+        except forms.ValidationError as erro:
+            self.add_error("senha", erro)
+
     def save(self):
-        d = self.cleaned_data
-        return User.objects.create_user(
-            username=d["email"], email=d["email"], password=d["senha"], first_name=d["nome"],
-        )
+        dados = self.cleaned_data
+        return criar_usuario(nome=dados["nome"], email=dados["email"], senha=dados["senha"])
