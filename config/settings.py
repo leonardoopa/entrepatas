@@ -1,6 +1,7 @@
 """Settings do EntrePatas. Valores sensíveis vêm de variáveis de ambiente."""
 
 import os
+from decimal import Decimal
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,7 +51,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "loja.context_processors.carrinho",
-                "loja.context_processors.categorias",
+                "loja.context_processors.loja",
             ],
         },
     },
@@ -76,7 +77,17 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
+USE_THOUSAND_SEPARATOR = True
 USE_TZ = True
+
+# Contas de cliente.
+LOGIN_URL = "loja:entrar"
+LOGIN_REDIRECT_URL = "loja:conta"
+LOGOUT_REDIRECT_URL = "loja:home"
+
+# Frete fixo, grátis a partir de um valor de compra.
+FRETE_FIXO = Decimal("19.90")
+FRETE_GRATIS_ACIMA = Decimal("199.00")
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"

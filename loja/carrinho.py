@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+from django.conf import settings
+
 from .models import Produto
 
 SESSION_KEY = "carrinho"
@@ -46,6 +48,17 @@ class Carrinho:
     def __len__(self):
         return sum(self.itens.values())
 
-    @property
-    def total(self):
-        return sum((s for _, _, s in self.linhas()), Decimal("0"))
+    @staticmethod
+    def calcular(linhas):
+        """Totais de um conjunto de linhas: subtotal, frete, total e quanto falta para frete grátis."""
+        subtotal = sum((s for _, _, s in linhas), Decimal("0"))
+        gratis = subtotal >= settings.FRETE_GRATIS_ACIMA
+        frete = Decimal("0") if gratis or not linhas else settings.FRETE_FIXO
+        return {
+            "subtotal": subtotal,
+            "frete": frete,
+            "total": subtotal + frete,
+            "frete_gratis": gratis,
+            "falta_frete": max(settings.FRETE_GRATIS_ACIMA - subtotal, Decimal("0")),
+            "progresso_frete": int(min(subtotal / settings.FRETE_GRATIS_ACIMA, 1) * 100),
+        }
