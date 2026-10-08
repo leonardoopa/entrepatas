@@ -1,3 +1,4 @@
+import mimetypes
 import os
 from decimal import Decimal
 from pathlib import Path
@@ -5,6 +6,8 @@ from pathlib import Path
 from .logging_config import montar_logging
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+mimetypes.add_type("image/webp", ".webp")
 
 
 def env_lista(nome, padrao=""):
