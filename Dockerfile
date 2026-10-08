@@ -11,7 +11,6 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-# Usuário sem privilégios; pastas que recebem arquivos gerados.
 RUN useradd --create-home --uid 1000 app \
     && mkdir -p /app/media /app/staticfiles \
     && chown -R app:app /app/media /app/staticfiles \

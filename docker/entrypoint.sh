@@ -1,6 +1,4 @@
 #!/bin/sh
-# "serve" (padrão): migra o banco e sobe o servidor.
-# Qualquer outro comando é executado como está, ex.: python manage.py createsuperuser
 set -e
 
 if [ "$1" != "serve" ]; then
