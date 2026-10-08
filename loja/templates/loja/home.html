@@ -1,30 +1,110 @@
 {% extends "loja/base.html" %}
 {% block content %}
-<section class="banner">
-  <h1>Tudo para o seu pet, com carinho.</h1>
-  <p>Rações, brinquedos, higiene e muito mais.</p>
+<section class="hero" data-hero aria-roledescription="carrossel" aria-label="Destaques">
+  <div class="hero__slides">
+    <div class="hero__trilho">
+      <article class="hero__slide hero__slide--azul is-ativo">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Ofertas da semana</span>
+          <h1>Até 25% off em rações e petiscos</h1>
+          <p>Escolha o melhor para o seu melhor amigo e pague em até 10x sem juros.</p>
+          <a class="btn btn--grande" href="{% url 'loja:ofertas' %}">Ver ofertas</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">🐶<span>🐱</span></div>
+      </article>
+      <article class="hero__slide hero__slide--amarelo">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Frete grátis</span>
+          <h2>Compras acima de R$ {{ frete_gratis_acima|floatformat:"0g" }} chegam sem custo</h2>
+          <p>Monte o carrinho e acompanhe quanto falta para ganhar o frete.</p>
+          <a class="btn btn--grande btn--escuro" href="{% url 'loja:busca' %}">Ver todos os produtos</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">📦<span>🚚</span></div>
+      </article>
+      <article class="hero__slide hero__slide--roxo">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Para os gatinhos</span>
+          <h2>Areia, ração e arranhadores para o seu gato</h2>
+          <p>Tudo para a rotina de quem manda na casa.</p>
+          <a class="btn btn--grande" href="{% url 'loja:categoria' 'gatos' %}">Ver para gatos</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">😺<span>🧶</span></div>
+      </article>
+      <article class="hero__slide hero__slide--rosa">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Hora de brincar</span>
+          <h2>Brinquedos para gastar energia</h2>
+          <p>Bolinhas, mordedores e pelúcias para todos os tamanhos.</p>
+          <a class="btn btn--grande" href="{% url 'loja:departamento' 'brinquedos' %}">Ver brinquedos</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">🎾<span>🦴</span></div>
+      </article>
+      <article class="hero__slide hero__slide--verde">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Saúde e bem-estar</span>
+          <h2>Farmácia e higiene para o seu pet</h2>
+          <p>Antipulgas, vermífugos, shampoos e muito mais em um só lugar.</p>
+          <a class="btn btn--grande" href="{% url 'loja:departamento' 'farmacia' %}">Ver farmácia</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">💊<span>🛁</span></div>
+      </article>
+    </div>
+  </div>
+  <button type="button" class="hero__seta hero__seta--ant" data-dir="-1" aria-label="Slide anterior">‹</button>
+  <button type="button" class="hero__seta hero__seta--prox" data-dir="1" aria-label="Próximo slide">›</button>
+  <div class="hero__pontos" role="tablist"></div>
 </section>
 
-<section>
-  <h2>Compre por categoria</h2>
-  <div class="categorias">
-    {% for c in menu_categorias %}
-      <a class="categoria" href="{{ c.get_absolute_url }}"><span>{{ c.emoji }}</span>{{ c.nome }}</a>
-    {% endfor %}
+<section class="animais" aria-label="Compre por animal">
+  {% for item in menu %}
+    <a class="animal" href="{{ item.categoria.get_absolute_url }}">
+      <span class="animal__icone">{% include "loja/_icone_animal.html" with c=item.categoria %}</span>
+      <span>{{ item.categoria.nome }}</span>
+    </a>
+  {% endfor %}
+</section>
+
+<section class="vantagens" aria-label="Vantagens">
+  <div><span>🚚</span><strong>Frete grátis</strong><small>acima de R$ {{ frete_gratis_acima|floatformat:"0g" }}</small></div>
+  <div><span>💳</span><strong>Até 10x sem juros</strong><small>no cartão de crédito</small></div>
+  <div><span>🔄</span><strong>Troca fácil</strong><small>em até 30 dias</small></div>
+  <div><span>🐾</span><strong>Feito por quem ama pets</strong><small>curadoria EntrePatas</small></div>
+</section>
+
+{% if ofertas %}{% url 'loja:ofertas' as url_ofertas %}{% include "loja/_carrossel.html" with titulo="Ofertas imperdíveis" itens=ofertas link=url_ofertas %}{% endif %}
+
+<section class="banners">
+  {% for item in menu|slice:":2" %}
+    <a class="banner banner--{{ forloop.counter }}" href="{{ item.categoria.get_absolute_url }}">
+      <div>
+        <span>Tudo para</span>
+        <strong>{{ item.categoria.nome|lower }}</strong>
+        <em>Comprar agora ›</em>
+      </div>
+      <b aria-hidden="true">{% include "loja/_icone_animal.html" with c=item.categoria %}</b>
+    </a>
+  {% endfor %}
+</section>
+
+{% if mais_vendidos %}{% url 'loja:busca' as url_todos %}{% include "loja/_carrossel.html" with titulo="Mais vendidos" itens=mais_vendidos link=url_todos %}{% endif %}
+
+<section class="secao">
+  <div class="secao__cab"><h2>Compre por departamento</h2></div>
+  <div class="chips">
+    {% for d in menu_departamentos %}<a class="chip" href="{{ d.get_absolute_url }}">{{ d.nome }}</a>{% endfor %}
   </div>
 </section>
 
-{% if promocoes %}
-<section>
-  <h2>Ofertas</h2>
-  <div class="grade">{% for p in promocoes %}{% include "loja/_card.html" %}{% endfor %}</div>
-</section>
-{% endif %}
+{% for cat, itens in secoes_animais %}
+  {% include "loja/_carrossel.html" with titulo=cat.emoji|add:" Para "|add:cat.nome|lower itens=itens link=cat.get_absolute_url %}
+{% endfor %}
 
-{% if destaques %}
-<section>
-  <h2>Destaques</h2>
-  <div class="grade">{% for p in destaques %}{% include "loja/_card.html" %}{% endfor %}</div>
+{% if marcas %}
+<section class="secao">
+  <div class="secao__cab"><h2>Marcas favoritas</h2></div>
+  <div class="chips">
+    {% for m in marcas %}<a class="chip chip--marca" href="{% url 'loja:busca' %}?marca={{ m|urlencode }}">{{ m }}</a>{% endfor %}
+  </div>
 </section>
 {% endif %}
 {% endblock %}
