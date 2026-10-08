@@ -1,0 +1,20 @@
+{% extends "loja/base.html" %}
+{% load static %}
+{% block title %}Nova senha — EntrePatas{% endblock %}
+{% block content %}
+<section class="auth">
+  <img class="auth__icone" src="{% static 'loja/icone.png' %}" alt="" width="72" height="72">
+  {% if validlink %}
+    <h1>Criar nova senha</h1>
+    <form method="post" class="form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn--bloco btn--grande" type="submit">Salvar nova senha</button>
+    </form>
+  {% else %}
+    <h1>Link inválido</h1>
+    <p class="auth__sub">Este link de recuperação já foi usado ou expirou.</p>
+    <p class="auth__troca"><a class="btn" href="{% url 'loja:senha_recuperar' %}">Pedir um novo link</a></p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "loja/base.html" %}
+{% load static %}
+{% block title %}Verifique seu e-mail — EntrePatas{% endblock %}
+{% block content %}
+<section class="auth">
+  <img class="auth__icone" src="{% static 'loja/icone.png' %}" alt="" width="72" height="72">
+  <h1>Verifique seu e-mail</h1>
+  <p class="auth__sub">Se existir uma conta com o e-mail informado, enviamos um link para criar uma nova senha. O link vale por 2 horas.</p>
+  <p class="auth__sub">Não chegou? Confira a caixa de spam ou <a href="{% url 'loja:senha_recuperar' %}">tente novamente</a>.</p>
+  <p class="auth__troca"><a href="{% url 'loja:entrar' %}">Voltar para o login</a></p>
+</section>
+{% endblock %}

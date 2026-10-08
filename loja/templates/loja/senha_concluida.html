@@ -1,0 +1,11 @@
+{% extends "loja/base.html" %}
+{% load static %}
+{% block title %}Senha alterada — EntrePatas{% endblock %}
+{% block content %}
+<section class="auth">
+  <img class="auth__icone" src="{% static 'loja/icone.png' %}" alt="" width="72" height="72">
+  <h1>Senha alterada!</h1>
+  <p class="auth__sub">Sua nova senha já está valendo. Entre na sua conta para continuar.</p>
+  <p class="auth__troca"><a class="btn btn--grande" href="{% url 'loja:entrar' %}">Entrar</a></p>
+</section>
+{% endblock %}

@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}EntrePatas — tudo para o seu pet{% endblock %}</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="{% static 'loja/favicon.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'loja/apple-touch-icon.png' %}">
+  <meta name="theme-color" content="#17375e">
   <link rel="stylesheet" href="{% static 'loja/style.css' %}">
   <script src="{% static 'loja/app.js' %}" defer></script>
 </head>
@@ -13,7 +16,7 @@
   <header class="topo">
     <div class="container topo__linha">
       <button class="menu-btn" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-toggle>☰</button>
-      <a class="logo" href="{% url 'loja:home' %}" aria-label="EntrePatas, página inicial">Entre<span>Patas</span></a>
+      <a class="logo" href="{% url 'loja:home' %}" aria-label="EntrePatas, página inicial"><img src="{% static 'loja/logo.png' %}" alt="EntrePatas" width="619" height="193"></a>
       <form class="busca" role="search" action="{% url 'loja:busca' %}" method="get">
         <input type="search" name="q" value="{{ termo|default:'' }}" placeholder="O que seu pet precisa?" aria-label="Buscar produtos" autocomplete="off" data-busca>
         <button type="submit" aria-label="Buscar">🔍</button>
@@ -78,7 +81,7 @@
   <footer class="rodape">
     <div class="container rodape__grade">
       <div>
-        <a class="logo logo--rodape" href="{% url 'loja:home' %}">Entre<span>Patas</span></a>
+        <a class="logo logo--rodape" href="{% url 'loja:home' %}" aria-label="EntrePatas, página inicial"><img src="{% static 'loja/logo.png' %}" alt="EntrePatas" width="619" height="193" loading="lazy"></a>
         <p>Tudo para o seu pet, com carinho.</p>
         <p class="rodape__aviso">Loja de demonstração. Produtos, marcas e avaliações são fictícios.</p>
       </div>

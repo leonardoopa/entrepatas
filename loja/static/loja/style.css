@@ -54,8 +54,8 @@ main { padding-top: 20px; padding-bottom: 56px; min-height: 60vh; }
 .faixa { background: var(--amarelo); color: var(--azul); text-align: center; font-size: .85rem; font-weight: 700; padding: 6px 12px; }
 .topo { background: var(--azul); color: #fff; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0, 0, 0, .15); }
 .topo__linha { display: flex; align-items: center; gap: 18px; padding-top: 12px; padding-bottom: 12px; }
-.logo { color: #fff; font-size: 1.9rem; font-weight: 900; text-decoration: none; letter-spacing: -.03em; white-space: nowrap; }
-.logo span { color: var(--amarelo); }
+.logo { display: flex; align-items: center; flex: none; text-decoration: none; }
+.logo img { display: block; height: 46px; width: auto; }
 .menu-btn { display: none; background: none; border: 0; color: #fff; font-size: 1.6rem; cursor: pointer; padding: 0 4px; }
 
 .busca { flex: 1; position: relative; display: flex; max-width: 640px; margin: 0 auto; }
@@ -369,6 +369,10 @@ select, .form input { font: inherit; }
 .form input:focus { outline: none; border-color: var(--amarelo); }
 .errorlist { color: var(--vermelho); margin: 0; padding-left: 18px; font-size: .88rem; font-weight: 600; }
 .auth { max-width: 460px; margin: 16px auto; }
+.auth__icone { display: block; width: 72px; height: 72px; margin: 0 auto 4px; }
+.auth h1 { text-align: center; }
+.auth__sub { text-align: center; }
+.auth__esqueci { text-align: center; margin: 14px 0 0; font-weight: 700; }
 .auth__sub { color: var(--suave); margin: 0 0 16px; }
 .auth__troca { text-align: center; font-weight: 600; }
 .form__erro { background: #fde8e6; color: var(--vermelho); border-radius: 12px; padding: 4px 14px; margin-bottom: 14px; }
@@ -431,7 +435,7 @@ select, .form input { font: inherit; }
 .rodape ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .rodape a { color: #dbe4f2; text-decoration: none; }
 .rodape a:hover { color: var(--amarelo); text-decoration: underline; }
-.logo--rodape { font-size: 1.6rem; }
+.logo--rodape img { height: 52px; margin-bottom: 8px; }
 .rodape__aviso { font-size: .85rem; opacity: .75; }
 .rodape__fim { border-top: 1px solid rgba(255, 255, 255, .15); text-align: center; padding: 14px; font-size: .85rem; opacity: .8; }
 
@@ -447,7 +451,8 @@ select, .form input { font: inherit; }
   .menu-btn { display: block; }
   .topo__linha { flex-wrap: wrap; gap: 10px 14px; }
   .busca { order: 5; flex-basis: 100%; max-width: none; }
-  .logo { margin-right: auto; font-size: 1.6rem; }
+  .logo { margin-right: auto; }
+  .logo img { height: 38px; }
   .carrinho-link .rotulo { display: none; }
   .menu { display: none; }
   .menu.is-aberto { display: block; }
