@@ -1,0 +1,41 @@
+{% load static %}<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}EntrePatas — tudo para o seu pet{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'loja/style.css' %}">
+</head>
+<body>
+  <header class="topo">
+    <div class="container topo__linha">
+      <a class="logo" href="{% url 'loja:home' %}">Entre<span>Patas</span></a>
+      <form class="busca" action="{% url 'loja:busca' %}" method="get">
+        <input type="search" name="q" value="{{ termo|default:'' }}" placeholder="Busque por ração, brinquedo, marca…" aria-label="Buscar produtos">
+        <button type="submit">Buscar</button>
+      </form>
+      <a class="carrinho-link" href="{% url 'loja:carrinho' %}">🛒 Carrinho{% if carrinho_qtd %} <span class="badge">{{ carrinho_qtd }}</span>{% endif %}</a>
+    </div>
+    <nav class="menu">
+      <div class="container menu__linha">
+        {% for c in menu_categorias %}
+          <a href="{{ c.get_absolute_url }}">{{ c.emoji }} {{ c.nome }}</a>
+        {% endfor %}
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% if messages %}
+      <ul class="mensagens">
+        {% for m in messages %}<li class="mensagem mensagem--{{ m.tags }}">{{ m }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="rodape">
+    <div class="container">© EntrePatas — tudo para o seu pet.</div>
+  </footer>
+</body>
+</html>

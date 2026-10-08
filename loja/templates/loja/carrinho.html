@@ -1,0 +1,35 @@
+{% extends "loja/base.html" %}
+{% block title %}Carrinho — EntrePatas{% endblock %}
+{% block content %}
+<h1>Meu carrinho</h1>
+{% if linhas %}
+<table class="tabela">
+  <thead><tr><th>Produto</th><th>Preço</th><th>Qtd</th><th>Subtotal</th><th></th></tr></thead>
+  <tbody>
+  {% for p, qtd, subtotal in linhas %}
+    <tr>
+      <td><a href="{{ p.get_absolute_url }}">{{ p.nome }}</a></td>
+      <td>R$ {{ p.preco_final }}</td>
+      <td>
+        <form method="post" action="{% url 'loja:carrinho_atualizar' p.pk %}" class="qtd">
+          {% csrf_token %}
+          <input type="number" name="quantidade" value="{{ qtd }}" min="0" max="{{ p.estoque }}" aria-label="Quantidade de {{ p.nome }}">
+          <button class="btn btn--sec" type="submit">Atualizar</button>
+        </form>
+      </td>
+      <td>R$ {{ subtotal }}</td>
+      <td>
+        <form method="post" action="{% url 'loja:carrinho_remover' p.pk %}">
+          {% csrf_token %}<button class="link" type="submit">Remover</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot><tr><td colspan="3"><strong>Total</strong></td><td colspan="2"><strong>R$ {{ total }}</strong></td></tr></tfoot>
+</table>
+<p><a class="btn" href="{% url 'loja:checkout' %}">Finalizar compra</a></p>
+{% else %}
+<p class="vazio">Seu carrinho está vazio. <a href="{% url 'loja:home' %}">Continuar comprando</a></p>
+{% endif %}
+{% endblock %}

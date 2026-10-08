@@ -1,0 +1,30 @@
+{% extends "loja/base.html" %}
+{% block content %}
+<section class="banner">
+  <h1>Tudo para o seu pet, com carinho.</h1>
+  <p>Rações, brinquedos, higiene e muito mais.</p>
+</section>
+
+<section>
+  <h2>Compre por categoria</h2>
+  <div class="categorias">
+    {% for c in menu_categorias %}
+      <a class="categoria" href="{{ c.get_absolute_url }}"><span>{{ c.emoji }}</span>{{ c.nome }}</a>
+    {% endfor %}
+  </div>
+</section>
+
+{% if promocoes %}
+<section>
+  <h2>Ofertas</h2>
+  <div class="grade">{% for p in promocoes %}{% include "loja/_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+{% if destaques %}
+<section>
+  <h2>Destaques</h2>
+  <div class="grade">{% for p in destaques %}{% include "loja/_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+{% endblock %}

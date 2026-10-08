@@ -1,0 +1,14 @@
+{% extends "loja/base.html" %}
+{% block title %}Pedido #{{ pedido.pk }} — EntrePatas{% endblock %}
+{% block content %}
+<section class="confirmacao">
+  <h1>🎉 Pedido #{{ pedido.pk }} recebido!</h1>
+  <p>Obrigado, {{ pedido.nome }}. Enviaremos novidades para {{ pedido.email }}.</p>
+  <ul>
+    {% for i in pedido.itens.all %}<li>{{ i.quantidade }}× {{ i.produto.nome }} — R$ {{ i.subtotal }}</li>{% endfor %}
+  </ul>
+  <p><strong>Total: R$ {{ pedido.total }}</strong></p>
+  <p>Entrega em: {{ pedido.endereco }}, {{ pedido.cidade }}/{{ pedido.uf }} — CEP {{ pedido.cep }}</p>
+  <p><a class="btn" href="{% url 'loja:home' %}">Voltar à loja</a></p>
+</section>
+{% endblock %}

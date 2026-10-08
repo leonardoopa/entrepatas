@@ -1,0 +1,24 @@
+{% extends "loja/base.html" %}
+{% block title %}{{ titulo }} — EntrePatas{% endblock %}
+{% block content %}
+<div class="lista__cabecalho">
+  <h1>{{ titulo }}</h1>
+  <form method="get">
+    {% if termo %}<input type="hidden" name="q" value="{{ termo }}">{% endif %}
+    <label>Ordenar por
+      <select name="ordem" onchange="this.form.submit()">
+        <option value="nome" {% if ordem == "nome" %}selected{% endif %}>Nome</option>
+        <option value="menor-preco" {% if ordem == "menor-preco" %}selected{% endif %}>Menor preço</option>
+        <option value="maior-preco" {% if ordem == "maior-preco" %}selected{% endif %}>Maior preço</option>
+        <option value="novidades" {% if ordem == "novidades" %}selected{% endif %}>Novidades</option>
+      </select>
+    </label>
+  </form>
+</div>
+
+{% if produtos %}
+  <div class="grade">{% for p in produtos %}{% include "loja/_card.html" %}{% endfor %}</div>
+{% else %}
+  <p class="vazio">Nenhum produto encontrado.</p>
+{% endif %}
+{% endblock %}

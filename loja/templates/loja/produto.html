@@ -1,0 +1,37 @@
+{% extends "loja/base.html" %}
+{% block title %}{{ produto.nome }} — EntrePatas{% endblock %}
+{% block content %}
+<nav class="migalhas"><a href="{% url 'loja:home' %}">Início</a> › <a href="{{ produto.categoria.get_absolute_url }}">{{ produto.categoria.nome }}</a> › {{ produto.nome }}</nav>
+
+<section class="detalhe">
+  <div class="detalhe__img">
+    {% if produto.imagem %}<img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">{% else %}<span class="placeholder">{{ produto.categoria.emoji|default:"🐾" }}</span>{% endif %}
+  </div>
+  <div class="detalhe__info">
+    {% if produto.marca %}<span class="card__marca">{{ produto.marca }}</span>{% endif %}
+    <h1>{{ produto.nome }}</h1>
+    <div class="preco preco--grande">
+      {% if produto.em_promocao %}<s>R$ {{ produto.preco }}</s> <span class="selo selo--inline">-{{ produto.desconto_percentual }}%</span>{% endif %}
+      <strong>R$ {{ produto.preco_final }}</strong>
+    </div>
+    {% if produto.estoque > 0 %}
+      <form method="post" action="{% url 'loja:carrinho_adicionar' produto.pk %}" class="comprar">
+        {% csrf_token %}
+        <input type="number" name="quantidade" value="1" min="1" max="{{ produto.estoque }}" aria-label="Quantidade">
+        <button class="btn" type="submit">Adicionar ao carrinho</button>
+      </form>
+      <p class="estoque">{{ produto.estoque }} em estoque</p>
+    {% else %}
+      <p class="esgotado">Produto esgotado</p>
+    {% endif %}
+    {% if produto.descricao %}<h2>Descrição</h2><p>{{ produto.descricao|linebreaksbr }}</p>{% endif %}
+  </div>
+</section>
+
+{% if relacionados %}
+<section>
+  <h2>Você também pode gostar</h2>
+  <div class="grade">{% for p in relacionados %}{% include "loja/_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+{% endblock %}
