@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="{% static 'loja/apple-touch-icon.png' %}">
   <meta name="theme-color" content="#17375e">
   <link rel="stylesheet" href="{% static 'loja/style.css' %}">
-  <script src="{% static 'loja/app.js' %}" defer></script>
+  <script type="module" src="{% static 'loja/js/main.js' %}"></script>
 </head>
 <body data-url-sugestoes="{% url 'loja:sugestoes' %}" data-url-minicarrinho="{% url 'loja:minicarrinho' %}">
   <div class="faixa">🚚 Frete grátis em compras acima de R$ {{ frete_gratis_acima|floatformat:"0g" }} &nbsp;·&nbsp; 💳 Parcele em até 10x sem juros</div>
@@ -55,8 +55,20 @@
             {% if item.departamentos %}
               <div class="mega">
                 <ul>
-                  {% for d in item.departamentos %}
-                    <li><a href="{{ item.categoria.get_absolute_url }}?depto={{ d.slug }}">{{ d.nome }}</a></li>
+                  {% for entrada in item.departamentos %}
+                    {% with d=entrada.departamento %}
+                    <li class="mega__dep{% if entrada.subdepartamentos|length > 1 %} mega__dep--com-sub{% endif %}">
+                      <a href="{{ item.categoria.get_absolute_url }}?depto={{ d.slug }}">{{ d.nome }}</a>
+                      {% if entrada.subdepartamentos|length > 1 %}
+                        <ul class="mega__sub">
+                          {% for sub in entrada.subdepartamentos %}
+                            <li><a href="{{ item.categoria.get_absolute_url }}?depto={{ d.slug }}&amp;sub={{ sub.slug }}">{{ sub.nome }}</a></li>
+                          {% endfor %}
+                          <li class="mega__ver"><a href="{{ item.categoria.get_absolute_url }}?depto={{ d.slug }}">Ver tudo em {{ d.nome|lower }}</a></li>
+                        </ul>
+                      {% endif %}
+                    </li>
+                    {% endwith %}
                   {% endfor %}
                   <li class="mega__ver"><a href="{{ item.categoria.get_absolute_url }}">Ver tudo para {{ item.categoria.nome|lower }}</a></li>
                 </ul>

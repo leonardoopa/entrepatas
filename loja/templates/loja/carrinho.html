@@ -7,7 +7,8 @@
   <div>
     {% include "loja/_frete_barra.html" %}
     <ul class="itens">
-      {% for p, qtd, subtotal in linhas %}
+      {% for linha in linhas %}
+        {% with p=linha.produto %}
         <li class="item">
           <a class="item__arte" href="{{ p.get_absolute_url }}">{% include "loja/_arte.html" %}</a>
           <div class="item__info">
@@ -19,27 +20,24 @@
             {% csrf_token %}
             <div class="stepper" data-stepper>
               <button type="button" data-step="-1" aria-label="Diminuir">−</button>
-              <input type="number" name="quantidade" value="{{ qtd }}" min="0" max="{{ p.estoque }}" aria-label="Quantidade de {{ p.nome }}">
+              <input type="number" name="quantidade" value="{{ linha.quantidade }}" min="0" max="{{ p.estoque }}" aria-label="Quantidade de {{ p.nome }}">
               <button type="button" data-step="1" aria-label="Aumentar">+</button>
             </div>
             <noscript><button class="btn btn--pequeno" type="submit">Atualizar</button></noscript>
           </form>
-          <strong class="item__subtotal">R$ {{ subtotal|floatformat:"2g" }}</strong>
+          <strong class="item__subtotal">R$ {{ linha.subtotal|floatformat:"2g" }}</strong>
           <form method="post" action="{% url 'loja:carrinho_remover' p.pk %}">
             {% csrf_token %}<button class="icone-btn" type="submit" aria-label="Remover {{ p.nome }}">🗑</button>
           </form>
         </li>
+        {% endwith %}
       {% endfor %}
     </ul>
   </div>
 
   <aside class="resumo">
     <h2>Resumo do pedido</h2>
-    <dl class="totais">
-      <div><dt>Subtotal</dt><dd>R$ {{ subtotal|floatformat:"2g" }}</dd></div>
-      <div><dt>Frete</dt><dd>{% if frete_gratis %}Grátis{% else %}R$ {{ frete|floatformat:"2g" }}{% endif %}</dd></div>
-      <div class="totais__total"><dt>Total</dt><dd>R$ {{ total|floatformat:"2g" }}</dd></div>
-    </dl>
+    {% include "loja/_totais.html" %}
     <a class="btn btn--bloco btn--grande" href="{% url 'loja:checkout' %}">Finalizar compra</a>
     <a class="resumo__continuar" href="{% url 'loja:home' %}">Continuar comprando</a>
   </aside>

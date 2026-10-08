@@ -1,0 +1,5 @@
+<dl class="totais">
+  <div><dt>Subtotal</dt><dd>R$ {{ resumo.subtotal|floatformat:"2g" }}</dd></div>
+  <div><dt>Frete</dt><dd>{% if resumo.frete_gratis %}Grátis{% else %}R$ {{ resumo.frete|floatformat:"2g" }}{% endif %}</dd></div>
+  <div class="totais__total"><dt>Total</dt><dd>R$ {{ resumo.total|floatformat:"2g" }}</dd></div>
+</dl>
