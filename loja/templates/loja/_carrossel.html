@@ -1,0 +1,13 @@
+<section class="secao">
+  <div class="secao__cab">
+    <h2>{{ titulo }}</h2>
+    {% if link %}<a class="secao__ver" href="{{ link }}">Ver tudo ›</a>{% endif %}
+  </div>
+  <div class="carrossel" data-carrossel>
+    <button type="button" class="carrossel__seta carrossel__seta--ant" data-dir="-1" aria-label="Anteriores">‹</button>
+    <div class="carrossel__pista">
+      {% for p in itens %}<div class="carrossel__item">{% include "loja/_card.html" %}</div>{% endfor %}
+    </div>
+    <button type="button" class="carrossel__seta carrossel__seta--prox" data-dir="1" aria-label="Próximos">›</button>
+  </div>
+</section>
