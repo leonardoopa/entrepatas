@@ -1,6 +1,9 @@
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
+import re
+
+from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
@@ -306,3 +309,72 @@ class ContasTests(TestCase):
         self.assertIn("Rações", gatos)
         self.assertIn("Comedouros e Bebedouros", gatos)
         self.assertNotIn("Camas e Casinhas</a>", html[html.index('data-animal="peixes"'):html.index('data-animal="roedores"')])
+
+
+class RecuperarSenhaTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.usuario = User.objects.create_user(
+            username="ana@example.com", email="ana@example.com", password="Senha!Forte123", first_name="Ana",
+        )
+
+    def _link_do_email(self):
+        self.assertEqual(len(mail.outbox), 1)
+        achado = re.search(r"https?://testserver(/conta/senha/redefinir/\S+)", mail.outbox[0].body)
+        self.assertIsNotNone(achado, mail.outbox[0].body)
+        return achado.group(1)
+
+    def test_fluxo_completo(self):
+        resp = self.client.post(reverse("loja:senha_recuperar"), {"email": "ana@example.com"})
+        self.assertRedirects(resp, reverse("loja:senha_enviada"))
+        self.assertEqual(mail.outbox[0].to, ["ana@example.com"])
+        self.assertIn("Olá, Ana!", mail.outbox[0].body)
+
+        link = self._link_do_email()
+        resp = self.client.get(link, follow=True)  # troca o token da URL por um da sessão
+        self.assertTrue(resp.context["validlink"])
+        resp = self.client.post(resp.request["PATH_INFO"], {
+            "new_password1": "NovaSenha!987xy", "new_password2": "NovaSenha!987xy",
+        })
+        self.assertRedirects(resp, reverse("loja:senha_concluida"))
+
+        self.assertFalse(self.client.login(username="ana@example.com", password="Senha!Forte123"))
+        self.assertTrue(self.client.login(username="ana@example.com", password="NovaSenha!987xy"))
+
+    def test_link_so_funciona_uma_vez(self):
+        self.client.post(reverse("loja:senha_recuperar"), {"email": "ana@example.com"})
+        link = self._link_do_email()
+        resp = self.client.get(link, follow=True)
+        self.client.post(resp.request["PATH_INFO"], {
+            "new_password1": "NovaSenha!987xy", "new_password2": "NovaSenha!987xy",
+        })
+        resp = self.client.get(link, follow=True)
+        self.assertFalse(resp.context["validlink"])
+        self.assertContains(resp, "Link inválido")
+
+    def test_link_invalido(self):
+        resp = self.client.get(reverse("loja:senha_redefinir", args=["abc", "token-falso"]), follow=True)
+        self.assertContains(resp, "Link inválido")
+
+    def test_email_desconhecido_nao_revela_nada(self):
+        resp = self.client.post(reverse("loja:senha_recuperar"), {"email": "ninguem@example.com"})
+        self.assertRedirects(resp, reverse("loja:senha_enviada"))
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_senha_fraca_e_rejeitada(self):
+        self.client.post(reverse("loja:senha_recuperar"), {"email": "ana@example.com"})
+        resp = self.client.get(self._link_do_email(), follow=True)
+        resp = self.client.post(resp.request["PATH_INFO"], {"new_password1": "12345678", "new_password2": "12345678"})
+        self.assertEqual(resp.status_code, 200)
+        self.usuario.refresh_from_db()
+        self.assertTrue(self.usuario.check_password("Senha!Forte123"))
+
+    def test_login_tem_link_para_recuperar(self):
+        self.assertContains(self.client.get(reverse("loja:entrar")), reverse("loja:senha_recuperar"))
+
+
+class LogoTests(TestCase):
+    def test_cabecalho_usa_logo_e_favicon(self):
+        html = self.client.get(reverse("loja:home")).content.decode()
+        self.assertIn("loja/logo.png", html)
+        self.assertIn("loja/favicon.png", html)

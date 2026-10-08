@@ -1,0 +1,10 @@
+# Desenvolvimento (carregado automaticamente por "docker compose up").
+# Código montado do disco: o servidor recarrega ao salvar arquivos.
+services:
+  web:
+    environment:
+      DJANGO_DEBUG: "1"
+      DJANGO_SEED: "1"
+    volumes:
+      - .:/app
+      - media:/app/media
