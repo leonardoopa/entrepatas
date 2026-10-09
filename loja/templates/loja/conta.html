@@ -9,14 +9,14 @@
   {% for pedido in pedidos %}
     <details class="pedido-card">
       <summary>
-        <span class="pedido-card__num">Pedido #{{ pedido.pk }}</span>
-        <span class="pedido-card__data">{{ pedido.criado_em|date:"d/m/Y" }}</span>
-        <span class="status status--{{ pedido.status }}">{{ pedido.get_status_display }}</span>
+        <span class="pedido-card__num">Pedido {{ pedido.numero }}</span>
+        <span class="pedido-card__data">{{ pedido.comprado_em|date:"d/m/Y" }}</span>
+        <span class="status status--{{ pedido.status }}">{{ pedido.status_rotulo }}</span>
         <strong>R$ {{ pedido.total|floatformat:"2g" }}</strong>
       </summary>
       <ul class="confirmacao__itens">
-        {% for i in pedido.itens.all %}
-          <li><span>{{ i.quantidade }}× <a href="{{ i.produto.get_absolute_url }}">{{ i.produto.nome }}</a></span><strong>R$ {{ i.subtotal|floatformat:"2g" }}</strong></li>
+        {% for i in pedido.itens %}
+          <li><span>{{ i.quantidade }}× {{ i.descricao }}</span><strong>R$ {{ i.subtotal|floatformat:"2g" }}</strong></li>
         {% endfor %}
         <li><span>Frete</span><strong>{% if pedido.frete %}R$ {{ pedido.frete|floatformat:"2g" }}{% else %}Grátis{% endif %}</strong></li>
       </ul>

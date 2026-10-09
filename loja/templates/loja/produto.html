@@ -16,12 +16,22 @@
   </div>
 
   <div class="detalhe__info">
-    {% if p.marca %}<a class="card__marca" href="{% url 'loja:busca' %}?marca={{ p.marca|urlencode }}">{{ p.marca }}</a>{% endif %}
+    {% if p.marca %}<a class="card__marca" href="{% url 'loja:busca' %}?marca={{ p.marca_slug }}">{{ p.marca }}</a>{% endif %}
     <h1>{{ p.nome }}</h1>
     {% if p.num_avaliacoes %}
       <div class="avaliacao">
         <span class="estrelas estrelas--grande" style="--p:{{ p.avaliacao_pct }}%" role="img" aria-label="Nota {{ p.avaliacao }} de 5">★★★★★</span>
         <small>{{ p.avaliacao }} · {{ p.num_avaliacoes }} avaliações</small>
+      </div>
+    {% endif %}
+
+    {% if p.variacoes|length > 1 %}
+      <div class="variacoes" role="group" aria-label="Variações">
+        {% for v in p.variacoes %}
+          <a class="variacao{% if v.sku == p.sku %} variacao--ativa{% endif %}{% if v.estoque <= 0 %} variacao--esgotada{% endif %}" href="{{ v.get_absolute_url }}">
+            {{ v.rotulo }}<small>R$ {{ v.preco_final|floatformat:"2g" }}</small>
+          </a>
+        {% endfor %}
       </div>
     {% endif %}
 
@@ -34,7 +44,7 @@
     {% endwith %}
 
     {% if p.estoque > 0 %}
-      <form method="post" action="{% url 'loja:carrinho_adicionar' p.pk %}" class="comprar" data-ajax-carrinho>
+      <form method="post" action="{% url 'loja:carrinho_adicionar' p.sku %}" class="comprar" data-ajax-carrinho>
         {% csrf_token %}
         <div class="stepper" data-stepper>
           <button type="button" data-step="-1" aria-label="Diminuir quantidade">−</button>
@@ -68,7 +78,7 @@
       {% if produto.marca %}<div><dt>Marca</dt><dd>{{ produto.marca }}</dd></div>{% endif %}
       <div><dt>Animal</dt><dd>{{ produto.categoria.nome }}</dd></div>
       {% if produto.departamento %}<div><dt>Departamento</dt><dd>{{ produto.departamento.nome }}</dd></div>{% endif %}
-      <div><dt>Código</dt><dd>EP-{{ produto.pk|stringformat:"05d" }}</dd></div>
+      <div><dt>Código</dt><dd>{{ produto.sku }}</dd></div>
     </dl>
   </div>
 </section>

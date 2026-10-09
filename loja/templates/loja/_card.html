@@ -20,7 +20,7 @@
       {% if n > 1 %}<small class="parcela">ou {{ n }}x de R$ {{ v|floatformat:"2g" }} sem juros</small>{% endif %}
     {% endwith %}
     {% if p.estoque > 0 %}
-      <form method="post" action="{% url 'loja:carrinho_adicionar' p.pk %}" data-ajax-carrinho>
+      <form method="post" action="{% url 'loja:carrinho_adicionar' p.sku %}" data-ajax-carrinho>
         {% csrf_token %}
         <button class="btn btn--bloco" type="submit">Comprar</button>
       </form>

@@ -528,3 +528,13 @@ select, .form input { font: inherit; }
   .cena__dica, .cena__reprodutor { display: none; }
   .revelar { opacity: 1; transform: none; }
 }
+
+.variacoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 14px; }
+.variacao {
+  display: flex; flex-direction: column; align-items: center; min-width: 84px; padding: 8px 16px; border: 2px solid var(--borda);
+  border-radius: 14px; background: #fff; color: var(--azul); font-weight: 800; text-decoration: none; transition: border-color .15s, background .15s;
+}
+.variacao small { color: var(--suave); font-weight: 600; font-size: .75rem; }
+.variacao:hover { border-color: var(--amarelo); }
+.variacao--ativa { border-color: var(--azul); background: #eef2f9; }
+.variacao--esgotada { opacity: .55; text-decoration: line-through; }
