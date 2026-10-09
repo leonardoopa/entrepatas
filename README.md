@@ -30,6 +30,20 @@ Regras de dependência: `views` dependem de `services` e `selectors`; `services`
 - **Aberto/fechado e inversão de dependência:** o frete é uma `PoliticaFrete` injetada em `montar_resumo` e `finalizar_pedido`. Para outra regra de frete basta criar uma nova classe com `calcular()`, sem mexer nas views nem no checkout.
 - **Testes:** `loja/tests/` tem um módulo por área; os serviços são testados sem passar pelas views.
 
+## Fotos reais na cena da home
+
+A cena "Tudo para cães e gatos" usa desenhos por padrão. Para usar fotos de verdade:
+
+1. Junte pelo menos 6 fotos por animal (12 é o ideal) e coloque em `fotos-originais/caes` e `fotos-originais/gatos`. Use apenas fotos que você tem direito de usar (suas, do cliente ou de bancos com licença comercial, como Unsplash, Pexels e Pixabay). Imagens de memes têm dono e não devem ser usadas.
+2. Rode o preparo, que recorta em quadrado, reduz e converte para WebP:
+
+```bash
+docker compose exec web python manage.py preparar_fotos_cena fotos-originais/caes caes
+docker compose exec web python manage.py preparar_fotos_cena fotos-originais/gatos gatos
+```
+
+As fotos vão para `loja/static/loja/cena/<animal>/` e aparecem na home como adesivos redondos. Com menos de 6 fotos de um lado, esse lado continua com os desenhos.
+
 ## Logs
 
 Os logs vão para a saída padrão (`docker compose logs -f web`) no formato `data nível logger evento chave=valor`. O nível vem de `DJANGO_LOG_LEVEL` (padrão `INFO`; use `DEBUG` para ver cada alteração do carrinho).
