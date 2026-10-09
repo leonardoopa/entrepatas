@@ -16,7 +16,7 @@
             <a href="{{ p.get_absolute_url }}">{{ p.nome }}</a>
             <span>R$ {{ p.preco_final|floatformat:"2g" }} cada</span>
           </div>
-          <form method="post" action="{% url 'loja:carrinho_atualizar' p.pk %}" class="item__qtd" data-auto-form>
+          <form method="post" action="{% url 'loja:carrinho_atualizar' p.sku %}" class="item__qtd" data-auto-form>
             {% csrf_token %}
             <div class="stepper" data-stepper>
               <button type="button" data-step="-1" aria-label="Diminuir">−</button>
@@ -26,7 +26,7 @@
             <noscript><button class="btn btn--pequeno" type="submit">Atualizar</button></noscript>
           </form>
           <strong class="item__subtotal">R$ {{ linha.subtotal|floatformat:"2g" }}</strong>
-          <form method="post" action="{% url 'loja:carrinho_remover' p.pk %}">
+          <form method="post" action="{% url 'loja:carrinho_remover' p.sku %}">
             {% csrf_token %}<button class="icone-btn" type="submit" aria-label="Remover {{ p.nome }}">🗑</button>
           </form>
         </li>

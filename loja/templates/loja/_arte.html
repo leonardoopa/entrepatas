@@ -1,4 +1,4 @@
-{% if p.imagem %}<img src="{{ p.imagem.url }}" alt="{{ p.nome }}" loading="lazy">{% else %}<svg class="arte" viewBox="0 0 200 200" style="--c:{{ p.cor }}" role="img" aria-label="{{ p.nome }}">
+{% if p.imagens %}<img src="{{ p.imagens.0 }}" alt="{{ p.nome }}" loading="lazy">{% else %}<svg class="arte" viewBox="0 0 200 200" style="--c:{{ p.cor }}" role="img" aria-label="{{ p.nome }}">
 {% if p.tipo == "saco" %}
 <ellipse class="sh" cx="100" cy="188" rx="62" ry="6"/>
 <path class="c" d="M52 40H148L158 62V176Q158 184 150 184H50Q42 184 42 176V62Z"/>

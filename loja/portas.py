@@ -1,0 +1,26 @@
+from collections.abc import Sequence
+from typing import Protocol
+
+from .dominio import (
+    ItemMenu, NovoPedido, PedidoCriado, PedidoSite, ProdutoCatalogo, ResultadoListagem, Vitrine,
+)
+
+
+class CatalogoRepositorio(Protocol):
+    def taxonomia(self) -> list[ItemMenu]: ...
+
+    def listar(self, parametros: Sequence[tuple[str, str]], pagina: int, tamanho: int) -> ResultadoListagem: ...
+
+    def produto(self, slug: str) -> ProdutoCatalogo | None: ...
+
+    def produtos_por_sku(self, skus: Sequence[str]) -> list[ProdutoCatalogo]: ...
+
+    def vitrines(self) -> dict[str, Vitrine]: ...
+
+
+class PedidosRepositorio(Protocol):
+    def criar(self, pedido: NovoPedido) -> PedidoCriado: ...
+
+    def obter(self, numero: str) -> PedidoSite | None: ...
+
+    def do_cliente(self, cliente_id: str) -> list[PedidoSite]: ...

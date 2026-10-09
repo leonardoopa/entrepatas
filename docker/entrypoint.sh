@@ -7,10 +7,6 @@ fi
 
 python manage.py migrate --noinput
 
-if [ "$DJANGO_SEED" = "1" ]; then
-  python manage.py seed
-fi
-
 if [ "$DJANGO_DEBUG" = "1" ]; then
   exec python manage.py runserver 0.0.0.0:8000
 fi

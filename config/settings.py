@@ -50,6 +50,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "loja.middleware.BackofficeIndisponivelMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -121,6 +122,11 @@ EMAIL_HOST_USER = os.environ.get("DJANGO_EMAIL_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_PASSWORD", "")
 EMAIL_USE_TLS = os.environ.get("DJANGO_EMAIL_TLS", "1") == "1"
 DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "EntrePatas <nao-responda@entrepatas.local>")
+
+BACKOFFICE_URL = os.environ.get("BACKOFFICE_URL", "http://host.docker.internal:8500/api/v1")
+BACKOFFICE_API_KEY = os.environ.get("BACKOFFICE_API_KEY", "")
+BACKOFFICE_TIMEOUT = float(os.environ.get("BACKOFFICE_TIMEOUT", "5"))
+BACKOFFICE_CACHE_SEGUNDOS = int(os.environ.get("BACKOFFICE_CACHE_SEGUNDOS", "30"))
 
 FRETE_FIXO = Decimal("19.90")
 FRETE_GRATIS_ACIMA = Decimal("199.00")

@@ -8,6 +8,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 
+from loja import backoffice
+from loja.backoffice.erros import BackofficeIndisponivel
 from loja.forms import CadastroForm, LoginForm, RecuperarSenhaForm
 
 logger = logging.getLogger(__name__)
@@ -35,7 +37,11 @@ def cadastro(request):
 
 @login_required
 def conta(request):
-    pedidos = request.user.pedidos.prefetch_related("itens__produto")
+    try:
+        pedidos = backoffice.obter_pedidos().do_cliente(str(request.user.pk))
+    except BackofficeIndisponivel:
+        messages.warning(request, "Não conseguimos carregar seus pedidos agora. Tente de novo em instantes.")
+        pedidos = []
     return render(request, "loja/conta.html", {"pedidos": pedidos})
 
 

@@ -54,7 +54,7 @@
         <fieldset>
           <legend>Marca</legend>
           {% for m in opcoes.marcas %}
-            <label class="opcao"><input type="checkbox" name="marca" value="{{ m }}" {% if m in filtros.marcas %}checked{% endif %} data-auto-enviar> {{ m }}</label>
+            <label class="opcao"><input type="checkbox" name="marca" value="{{ m.slug }}" {% if m.slug in filtros.marcas %}checked{% endif %} data-auto-enviar> {{ m.nome }}</label>
           {% endfor %}
         </fieldset>
       {% endif %}
@@ -82,14 +82,14 @@
     {% if pagina %}
       <div class="grade">{% for p in pagina %}{% include "loja/_card.html" %}{% endfor %}</div>
 
-      {% if pagina.paginator.num_pages > 1 %}
+      {% if pagina.total_paginas > 1 %}
         <nav class="paginacao" aria-label="Paginação">
-          {% if pagina.has_previous %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}pagina={{ pagina.previous_page_number }}" rel="prev">‹ Anterior</a>{% endif %}
-          {% for n in pagina.paginator.page_range %}
-            {% if n == pagina.number %}<span aria-current="page">{{ n }}</span>
+          {% if pagina.tem_anterior %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}pagina={{ pagina.numero|add:'-1' }}" rel="prev">‹ Anterior</a>{% endif %}
+          {% for n in pagina.intervalo %}
+            {% if n == pagina.numero %}<span aria-current="page">{{ n }}</span>
             {% else %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}pagina={{ n }}">{{ n }}</a>{% endif %}
           {% endfor %}
-          {% if pagina.has_next %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}pagina={{ pagina.next_page_number }}" rel="next">Próxima ›</a>{% endif %}
+          {% if pagina.tem_proxima %}<a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}pagina={{ pagina.numero|add:'1' }}" rel="next">Próxima ›</a>{% endif %}
         </nav>
       {% endif %}
     {% else %}
