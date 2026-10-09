@@ -31,8 +31,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-entrepatas}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-entrepatas-dev}
       POSTGRES_HOST: db
+      BACKOFFICE_URL: ${BACKOFFICE_URL:-http://host.docker.internal:8500/api/v1}
+      BACKOFFICE_API_KEY: ${BACKOFFICE_API_KEY:?crie uma chave no backoffice (criar_chave_api) e coloque no .env}
     ports:
       - "${WEB_PORT:-8431}:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - media:/app/media
 
