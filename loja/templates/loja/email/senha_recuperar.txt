@@ -1,0 +1,11 @@
+{% autoescape off %}Olá, {{ user.first_name|default:"cliente" }}!
+
+Recebemos um pedido para redefinir a senha da sua conta na EntrePatas.
+Para criar uma nova senha, acesse o link abaixo (válido por 2 horas):
+
+{{ protocol }}://{{ domain }}{% url 'loja:senha_redefinir' uidb64=uid token=token %}
+
+Se você não fez esse pedido, ignore este e-mail. Sua senha continua a mesma.
+
+Equipe EntrePatas
+{% endautoescape %}

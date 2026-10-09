@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-entrepatas}
+      POSTGRES_USER: ${POSTGRES_USER:-entrepatas}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-entrepatas-dev}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-0}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DJANGO_SERVE_MEDIA: "1"
+      POSTGRES_DB: ${POSTGRES_DB:-entrepatas}
+      POSTGRES_USER: ${POSTGRES_USER:-entrepatas}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-entrepatas-dev}
+      POSTGRES_HOST: db
+    ports:
+      - "${WEB_PORT:-8431}:8000"
+    volumes:
+      - media:/app/media
+
+volumes:
+  pgdata:
+  media:

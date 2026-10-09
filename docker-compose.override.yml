@@ -1,0 +1,8 @@
+services:
+  web:
+    environment:
+      DJANGO_DEBUG: "1"
+      DJANGO_SEED: "1"
+    volumes:
+      - .:/app
+      - media:/app/media

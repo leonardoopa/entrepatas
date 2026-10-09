@@ -12,7 +12,7 @@
     <button type="button" class="btn btn--contorno lista__filtrar" data-filtros-toggle>Filtrar</button>
     <label class="ordenar">Ordenar por
       <select name="ordem" form="filtros" data-auto-enviar>
-        {% for valor, rotulo in ordenacoes %}<option value="{{ valor }}" {% if ordem == valor %}selected{% endif %}>{{ rotulo }}</option>{% endfor %}
+        {% for valor, rotulo in ordenacoes %}<option value="{{ valor }}" {% if filtros.ordem == valor %}selected{% endif %}>{{ rotulo }}</option>{% endfor %}
       </select>
     </label>
   </div>
@@ -23,29 +23,38 @@
     <form id="filtros" method="get" action="{{ request.path }}">
       {% if termo %}<input type="hidden" name="q" value="{{ termo }}">{% endif %}
 
-      {% if facet_animais|length > 1 %}
+      {% if opcoes.animais|length > 1 %}
         <fieldset>
           <legend>Animal</legend>
-          {% for c in facet_animais %}
-            <label class="opcao"><input type="checkbox" name="animal" value="{{ c.slug }}" {% if c.slug in sel_animais %}checked{% endif %} data-auto-enviar> {{ c.emoji }} {{ c.nome }}</label>
+          {% for c in opcoes.animais %}
+            <label class="opcao"><input type="checkbox" name="animal" value="{{ c.slug }}" {% if c.slug in filtros.animais %}checked{% endif %} data-auto-enviar> {{ c.emoji }} {{ c.nome }}</label>
           {% endfor %}
         </fieldset>
       {% endif %}
 
-      {% if facet_deptos|length > 1 %}
+      {% if opcoes.departamentos|length > 1 %}
         <fieldset>
           <legend>Departamento</legend>
-          {% for d in facet_deptos %}
-            <label class="opcao"><input type="checkbox" name="depto" value="{{ d.slug }}" {% if d.slug in sel_deptos %}checked{% endif %} data-auto-enviar> {{ d.nome }}</label>
+          {% for d in opcoes.departamentos %}
+            <label class="opcao"><input type="checkbox" name="depto" value="{{ d.slug }}" {% if d.slug in filtros.departamentos %}checked{% endif %} data-auto-enviar> {{ d.nome }}</label>
           {% endfor %}
         </fieldset>
       {% endif %}
 
-      {% if facet_marcas|length > 1 %}
+      {% if opcoes.subdepartamentos|length > 1 %}
+        <fieldset>
+          <legend>Tipo</legend>
+          {% for sub in opcoes.subdepartamentos %}
+            <label class="opcao"><input type="checkbox" name="sub" value="{{ sub.slug }}" {% if sub.slug in filtros.subdepartamentos %}checked{% endif %} data-auto-enviar> {{ sub.nome }}</label>
+          {% endfor %}
+        </fieldset>
+      {% endif %}
+
+      {% if opcoes.marcas|length > 1 %}
         <fieldset>
           <legend>Marca</legend>
-          {% for m in facet_marcas %}
-            <label class="opcao"><input type="checkbox" name="marca" value="{{ m }}" {% if m in sel_marcas %}checked{% endif %} data-auto-enviar> {{ m }}</label>
+          {% for m in opcoes.marcas %}
+            <label class="opcao"><input type="checkbox" name="marca" value="{{ m }}" {% if m in filtros.marcas %}checked{% endif %} data-auto-enviar> {{ m }}</label>
           {% endfor %}
         </fieldset>
       {% endif %}
@@ -53,18 +62,18 @@
       <fieldset>
         <legend>Preço</legend>
         {% for valor, rotulo in faixas %}
-          <label class="opcao"><input type="radio" name="faixa" value="{{ valor }}" {% if faixa == valor %}checked{% endif %} data-auto-enviar> {{ rotulo }}</label>
+          <label class="opcao"><input type="radio" name="faixa" value="{{ valor }}" {% if filtros.faixa == valor %}checked{% endif %} data-auto-enviar> {{ rotulo }}</label>
         {% endfor %}
       </fieldset>
 
       <fieldset>
         <legend>Promoção</legend>
-        <label class="opcao"><input type="checkbox" name="promo" value="1" {% if promo %}checked{% endif %} data-auto-enviar> Somente em oferta</label>
+        <label class="opcao"><input type="checkbox" name="promo" value="1" {% if filtros.somente_ofertas %}checked{% endif %} data-auto-enviar> Somente em oferta</label>
       </fieldset>
 
       <div class="filtros__acoes">
         <button class="btn btn--bloco" type="submit">Aplicar filtros</button>
-        {% if filtros_ativos %}<a class="filtros__limpar" href="{{ request.path }}{% if termo %}?q={{ termo|urlencode }}{% endif %}">Limpar filtros</a>{% endif %}
+        {% if filtros.ativos %}<a class="filtros__limpar" href="{{ request.path }}{% if termo %}?q={{ termo|urlencode }}{% endif %}">Limpar filtros</a>{% endif %}
       </div>
     </form>
   </aside>
@@ -87,7 +96,7 @@
       <div class="vazio vazio--centro">
         <span class="vazio__emoji">🔎</span>
         <p>Nenhum produto encontrado.</p>
-        {% if filtros_ativos %}<a class="btn" href="{{ request.path }}{% if termo %}?q={{ termo|urlencode }}{% endif %}">Limpar filtros</a>{% endif %}
+        {% if filtros.ativos %}<a class="btn" href="{{ request.path }}{% if termo %}?q={{ termo|urlencode }}{% endif %}">Limpar filtros</a>{% endif %}
       </div>
     {% endif %}
   </section>

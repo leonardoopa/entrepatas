@@ -1,7 +1,9 @@
 {% extends "loja/base.html" %}
+{% load static %}
 {% block title %}Criar conta — EntrePatas{% endblock %}
 {% block content %}
 <section class="auth">
+  <img class="auth__icone" src="{% static 'loja/icone.png' %}" alt="" width="72" height="72">
   <h1>Criar conta</h1>
   <p class="auth__sub">Use seu e-mail e uma senha para entrar sempre que quiser.</p>
   <form method="post" class="form">

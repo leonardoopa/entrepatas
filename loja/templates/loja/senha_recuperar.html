@@ -1,0 +1,16 @@
+{% extends "loja/base.html" %}
+{% load static %}
+{% block title %}Recuperar senha — EntrePatas{% endblock %}
+{% block content %}
+<section class="auth">
+  <img class="auth__icone" src="{% static 'loja/icone.png' %}" alt="" width="72" height="72">
+  <h1>Recuperar senha</h1>
+  <p class="auth__sub">Informe o e-mail da sua conta. Enviaremos um link para você criar uma nova senha.</p>
+  <form method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn--bloco btn--grande" type="submit">Enviar link</button>
+  </form>
+  <p class="auth__troca"><a href="{% url 'loja:entrar' %}">Voltar para o login</a></p>
+</section>
+{% endblock %}
