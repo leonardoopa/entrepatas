@@ -31,6 +31,8 @@ class Command(BaseCommand):
 
         pasta = destino / animal
         pasta.mkdir(parents=True, exist_ok=True)
+        for anterior in pasta.glob(f"{animal}-*.webp"):
+            anterior.unlink()
         for indice, foto in enumerate(fotos, start=1):
             self._converter(foto, pasta / f"{animal}-{indice:02d}.webp", tamanho)
 

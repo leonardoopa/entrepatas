@@ -16,12 +16,12 @@ MINIMO_FOTOS = 4
 LIMITE_POUCAS_FOTOS = 6
 COLUNAS_POUCAS_FOTOS = 2
 TAMANHO_DESENHO = (6.5, 8.0)
-TAMANHO_FOTO = (8.0, 9.5)
+TAMANHO_FOTO = (8.8, 10.0)
 TAMANHO_FOTO_GRANDE = (10.5, 12.0)
 FIGURAS_POR_LADO = 12
 COLUNAS = 3
 VARIANTES = 6
-ZONA_LATERAL = (4.0, 33.0)
+ZONA_LATERAL = (3.0, 36.0)
 INICIO_PRIMEIRA = 0.04
 INICIO_ULTIMA = 0.72
 
@@ -91,7 +91,7 @@ def montar_figuras(quantidade: int, lado: Lado, semente: str, fotos: list[str] |
 
     figuras = []
     for posicao, ((coluna, linha), inicio, variante) in enumerate(zip(celulas, inicios, variantes)):
-        x = inicio_zona + (coluna + 0.5) * largura_coluna + sorteio.uniform(-0.6, 0.6)
+        x = inicio_zona + (coluna + 0.5) * largura_coluna + sorteio.uniform(-0.4, 0.4)
         y = (linha + 0.5) * altura_linha + sorteio.uniform(-3.0, 3.0)
         figuras.append(Figura(
             x=x if lado is Lado.ESQUERDO else 100 - x,

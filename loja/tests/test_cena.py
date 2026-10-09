@@ -159,6 +159,18 @@ class PrepararFotosCenaTests(TestCase):
                 self.assertLess(rgb.getpixel((50, 5))[1], 120)
                 self.assertGreater(rgb.getpixel((50, 95))[1], 200)
 
+    def test_remove_fotos_geradas_antes_para_nao_sobrar_lixo(self):
+        with tempfile.TemporaryDirectory() as raiz:
+            origem, destino = Path(raiz) / "origem", Path(raiz) / "destino"
+            origem.mkdir()
+            (destino / "caes").mkdir(parents=True)
+            (destino / "caes" / "caes-09.webp").write_bytes(b"antigo")
+            Image.new("RGB", (50, 50)).save(origem / "nova.png")
+
+            call_command("preparar_fotos_cena", str(origem), "caes", "--destino", str(destino), verbosity=0)
+
+            self.assertEqual([a.name for a in (destino / "caes").iterdir()], ["caes-01.webp"])
+
     def test_pasta_sem_fotos_gera_erro(self):
         with tempfile.TemporaryDirectory() as raiz:
             with self.assertRaises(CommandError):
