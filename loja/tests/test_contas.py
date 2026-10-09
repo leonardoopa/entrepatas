@@ -5,16 +5,14 @@ from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
-from loja.models import Produto
-
-from .fabricas import SENHA, criar_catalogo, criar_usuario
+from .fabricas import SENHA, BackofficeTestCase, criar_usuario
 
 User = get_user_model()
 
 CADASTRO = {"nome": "Maria", "email": "Maria@Example.com", "senha": "Gatinho!2024x", "senha2": "Gatinho!2024x"}
 
 
-class CadastroTests(TestCase):
+class CadastroTests(BackofficeTestCase):
     def test_cria_usuario_e_faz_login(self):
         resposta = self.client.post(reverse("loja:cadastro"), CADASTRO)
         self.assertRedirects(resposta, reverse("loja:conta"))
@@ -24,10 +22,9 @@ class CadastroTests(TestCase):
         self.assertEqual(int(self.client.session["_auth_user_id"]), usuario.pk)
 
     def test_mantem_o_carrinho(self):
-        produto = criar_catalogo()["bola"]
-        self.client.post(reverse("loja:carrinho_adicionar", args=[produto.pk]))
+        self.client.post(reverse("loja:carrinho_adicionar", args=["BOL-1"]))
         self.client.post(reverse("loja:cadastro"), CADASTRO)
-        self.assertEqual(self.client.session["carrinho"], {str(produto.pk): 1})
+        self.assertEqual(self.client.session["carrinho"], {"BOL-1": 1})
 
     def test_rejeita_email_repetido(self):
         criar_usuario()
@@ -49,7 +46,7 @@ class CadastroTests(TestCase):
         self.assertRedirects(resposta, reverse("loja:carrinho"))
 
 
-class LoginTests(TestCase):
+class LoginTests(BackofficeTestCase):
     def setUp(self):
         self.usuario = criar_usuario()
 
@@ -85,7 +82,7 @@ class LoginTests(TestCase):
         self.assertIn("loja/favicon.png", html)
 
 
-class RecuperarSenhaTests(TestCase):
+class RecuperarSenhaTests(BackofficeTestCase):
     NOVA_SENHA = "NovaSenha!987xy"
 
     def setUp(self):

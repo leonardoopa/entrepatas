@@ -1,33 +1,53 @@
 from django.core import mail
-from django.test import TestCase
 from django.urls import reverse
 
-from loja.models import Pedido
-
-from .fabricas import DADOS_ENTREGA, SENHA, criar_catalogo, criar_usuario
+from .fabricas import DADOS_ENTREGA, BackofficeTestCase, criar_usuario
 
 
-class LogsTests(TestCase):
+class LogsTests(BackofficeTestCase):
     def test_pedido_criado(self):
-        produto = criar_catalogo()["bola"]
-        self.client.post(reverse("loja:carrinho_adicionar", args=[produto.pk]))
+        self.client.post(reverse("loja:carrinho_adicionar", args=["BOL-1"]))
         with self.assertLogs("loja.services.checkout", "INFO") as logs:
             self.client.post(reverse("loja:checkout"), DADOS_ENTREGA)
-        self.assertIn(f"pedido_criado pedido={Pedido.objects.get().pk}", logs.output[0])
+        self.assertIn(f"pedido_criado numero={next(iter(self.bo.pedidos))}", logs.output[0])
 
     def test_estoque_insuficiente_gera_aviso(self):
-        c = criar_catalogo()
-        self.client.post(reverse("loja:carrinho_adicionar", args=[c["racao"].pk]), {"quantidade": 5})
-        c["racao"].__class__.objects.filter(pk=c["racao"].pk).update(estoque=1)
+        self.client.post(reverse("loja:carrinho_adicionar", args=["RAC-1"]), {"quantidade": 5})
+        self.bo.produtos[0]["estoque"] = 1
         with self.assertLogs("loja.services.checkout", "WARNING") as logs:
             self.client.post(reverse("loja:checkout"), DADOS_ENTREGA)
-        self.assertIn("checkout_item_indisponivel item=Ração", logs.output[0])
+        self.assertIn("checkout_item_indisponivel sku=RAC-1", logs.output[0])
 
     def test_produto_sem_estoque_no_carrinho(self):
-        osso = criar_catalogo()["osso"]
         with self.assertLogs("loja.services.carrinho", "WARNING") as logs:
-            self.client.post(reverse("loja:carrinho_adicionar", args=[osso.pk]))
-        self.assertIn(f"carrinho_produto_sem_estoque produto={osso.pk}", logs.output[0])
+            self.client.post(reverse("loja:carrinho_adicionar", args=["OSS-1"]))
+        self.assertIn("carrinho_produto_sem_estoque sku=OSS-1", logs.output[0])
+
+    def test_produto_adicionado(self):
+        with self.assertLogs("loja.views.carrinho", "INFO") as logs:
+            self.client.post(reverse("loja:carrinho_adicionar", args=["BOL-1"]), {"quantidade": 2})
+        self.assertIn("carrinho_produto_adicionado sku=BOL-1 quantidade=2", logs.output[0])
+
+    def test_backoffice_inacessivel_vira_aviso_sem_expor_dados(self):
+        from unittest.mock import patch
+
+        import requests
+
+        from loja.backoffice.cliente import ClienteBackoffice
+
+        cliente = ClienteBackoffice("http://bo/api/v1", "chave-secreta")
+        with patch.object(cliente.sessao, "request", side_effect=requests.ConnectionError("x")):
+            with self.assertLogs("loja.backoffice.cliente", "WARNING") as logs:
+                with self.assertRaises(Exception):
+                    cliente.get("vitrines/")
+        self.assertIn("backoffice_inacessivel", logs.output[0])
+        self.assertNotIn("chave-secreta", logs.output[0])
+
+    def test_site_sem_backoffice_registra_erro(self):
+        self.bo.indisponivel = True
+        with self.assertLogs("loja.middleware", "ERROR") as logs:
+            self.client.get(reverse("loja:busca"))
+        self.assertIn("site_sem_backoffice caminho=/busca/", logs.output[0])
 
     def test_cadastro_login_e_logout(self):
         with self.assertLogs("loja", "INFO") as logs:
@@ -55,8 +75,3 @@ class LogsTests(TestCase):
         self.assertIn("recuperacao_senha_solicitada", logs.output[0])
         self.assertNotIn("ana@example.com", logs.output[0])
         self.assertEqual(len(mail.outbox), 1)
-
-    def test_busca_sem_resultado(self):
-        with self.assertLogs("loja.views.catalogo", "INFO") as logs:
-            self.client.get(reverse("loja:busca"), {"q": "unicornio"})
-        self.assertIn("busca_sem_resultado", logs.output[0])

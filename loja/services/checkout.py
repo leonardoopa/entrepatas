@@ -1,84 +1,66 @@
 import logging
+import secrets
 from collections.abc import Mapping
+from datetime import datetime
 from typing import Any
 
 from django.contrib.auth.models import AbstractBaseUser
-from django.db import transaction
 
-from loja.models import ItemPedido, Pedido, Produto
+from loja.dominio import NovoPedido, PedidoCriado
+from loja.erros import (  # noqa: F401 — reexportados para quem usa o serviço
+    CarrinhoVazio, CheckoutError, CheckoutIndisponivel, ItemIndisponivel, PedidoRecusado,
+)
+from loja.portas import PedidosRepositorio
 
 from .carrinho import LinhaCarrinho
-from .frete import PoliticaFrete, politica_frete_padrao
-from .resumo import montar_resumo
+from .resumo import ResumoCompra
 
 logger = logging.getLogger(__name__)
 
 
-class CheckoutError(Exception):
-    pass
+def novo_numero_pedido() -> str:
+    return f"S{datetime.now():%y%m%d}-{secrets.token_hex(3).upper()}"
 
 
-class CarrinhoVazio(CheckoutError):
-    pass
-
-
-class ItemIndisponivel(CheckoutError):
-    def __init__(self, nome: str):
-        super().__init__(f"Item indisponível: {nome}")
-        self.nome = nome
+def _cliente(usuario: AbstractBaseUser | None, dados_entrega: Mapping[str, Any]) -> dict:
+    if usuario is not None:
+        return {"id_externo": str(usuario.pk), "nome": usuario.get_full_name() or dados_entrega["nome"], "email": usuario.email}
+    email = str(dados_entrega["email"]).lower()
+    return {
+        "id_externo": f"visitante:{email}", "nome": dados_entrega["nome"], "email": email,
+        "telefone": dados_entrega.get("telefone", ""),
+    }
 
 
 def finalizar_pedido(
     *,
+    numero: str,
     dados_entrega: Mapping[str, Any],
-    itens: Mapping[int, int],
+    linhas: list[LinhaCarrinho],
+    resumo: ResumoCompra,
+    pedidos: PedidosRepositorio,
     usuario: AbstractBaseUser | None = None,
-    politica_frete: PoliticaFrete | None = None,
-) -> Pedido:
-    if not itens:
+) -> PedidoCriado:
+    if not linhas:
         raise CarrinhoVazio()
-    politica = politica_frete or politica_frete_padrao()
-
+    pedido = NovoPedido(
+        numero=numero,
+        itens=tuple((linha.produto.sku, linha.quantidade) for linha in linhas),
+        cliente=_cliente(usuario, dados_entrega),
+        entrega={k: v for k, v in dados_entrega.items() if k in ("endereco", "cidade", "uf", "cep")},
+        frete=resumo.frete,
+    )
     try:
-        with transaction.atomic():
-            produtos = _travar_produtos(itens)
-            linhas = [LinhaCarrinho(produtos[pk], quantidade) for pk, quantidade in itens.items()]
-            resumo = montar_resumo(linhas, politica)
-            pedido = Pedido.objects.create(usuario=usuario, frete=resumo.frete, **dados_entrega)
-            _registrar_itens(pedido, linhas)
-            _baixar_estoque(linhas)
+        criado = pedidos.criar(pedido)
     except ItemIndisponivel as erro:
-        logger.warning("checkout_item_indisponivel item=%s", erro.nome)
+        nomes = {linha.produto.sku: linha.produto.nome for linha in linhas}
+        logger.warning("checkout_item_indisponivel sku=%s", erro.sku)
+        raise ItemIndisponivel(erro.sku, nomes.get(erro.sku, "")) from erro
+    except CheckoutError:
+        logger.warning("checkout_recusado numero=%s", numero)
         raise
-
     logger.info(
-        "pedido_criado pedido=%s usuario=%s itens=%d total=%s",
-        pedido.pk, usuario.pk if usuario else "anonimo", len(linhas), resumo.total,
+        "pedido_criado numero=%s usuario=%s itens=%d total=%s repetido=%s",
+        criado.numero, usuario.pk if usuario else "anonimo", len(linhas), criado.total, not criado.criado,
     )
-    return pedido
-
-
-def _travar_produtos(itens: Mapping[int, int]) -> dict[int, Produto]:
-    produtos = {p.pk: p for p in Produto.objects.select_for_update().filter(pk__in=itens)}
-    for pk, quantidade in itens.items():
-        produto = produtos.get(pk)
-        if produto is None or not produto.ativo or produto.estoque < quantidade:
-            raise ItemIndisponivel(produto.nome if produto else f"#{pk}")
-    return produtos
-
-
-def _registrar_itens(pedido: Pedido, linhas: list[LinhaCarrinho]) -> None:
-    ItemPedido.objects.bulk_create(
-        ItemPedido(
-            pedido=pedido, produto=linha.produto, quantidade=linha.quantidade,
-            preco_unitario=linha.produto.preco_final,
-        )
-        for linha in linhas
-    )
-
-
-def _baixar_estoque(linhas: list[LinhaCarrinho]) -> None:
-    for linha in linhas:
-        linha.produto.estoque -= linha.quantidade
-        linha.produto.vendas += linha.quantidade
-    Produto.objects.bulk_update([linha.produto for linha in linhas], ["estoque", "vendas"])
+    return criado

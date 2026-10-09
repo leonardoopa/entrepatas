@@ -3,26 +3,20 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.contrib.auth.password_validation import password_validators_help_text_html, validate_password
 
-from .models import Pedido
 from .services.contas import criar_usuario
 
 User = get_user_model()
 EMAIL_MAX = 150
 
 
-class CheckoutForm(forms.ModelForm):
-    class Meta:
-        model = Pedido
-        fields = ["nome", "email", "telefone", "cep", "endereco", "cidade", "uf"]
-        labels = {
-            "nome": "Nome completo",
-            "email": "E-mail",
-            "telefone": "Telefone",
-            "cep": "CEP",
-            "endereco": "Endereço",
-            "cidade": "Cidade",
-            "uf": "UF",
-        }
+class CheckoutForm(forms.Form):
+    nome = forms.CharField(label="Nome completo", max_length=120)
+    email = forms.EmailField(label="E-mail")
+    telefone = forms.CharField(label="Telefone", max_length=20, required=False)
+    cep = forms.CharField(label="CEP", max_length=9)
+    endereco = forms.CharField(label="Endereço", max_length=200)
+    cidade = forms.CharField(label="Cidade", max_length=80)
+    uf = forms.CharField(label="UF", min_length=2, max_length=2)
 
     def clean_uf(self):
         return self.cleaned_data["uf"].upper()

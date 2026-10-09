@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
-from loja.models import Categoria
+from loja.dominio import AnimalRef
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +48,8 @@ class Figura:
 
 @dataclass(frozen=True)
 class Cena:
-    caes: Categoria
-    gatos: Categoria
+    caes: AnimalRef
+    gatos: AnimalRef
     figuras_caes: list[Figura]
     figuras_gatos: list[Figura]
 
@@ -106,8 +106,8 @@ def montar_figuras(quantidade: int, lado: Lado, semente: str, fotos: list[str] |
 
 
 def montar_cena(
-    caes: Categoria,
-    gatos: Categoria,
+    caes: AnimalRef,
+    gatos: AnimalRef,
     quantidade: int = FIGURAS_POR_LADO,
     fotos_caes: list[str] | None = None,
     fotos_gatos: list[str] | None = None,

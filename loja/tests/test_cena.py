@@ -10,7 +10,9 @@ from PIL import Image
 
 from loja.cena import FIGURAS_POR_LADO, LIMITE_POUCAS_FOTOS, MINIMO_FOTOS, VARIANTES, Lado, listar_fotos, montar_cena, montar_figuras
 
-from .fabricas import criar_catalogo
+from loja.dominio import AnimalRef
+
+from .fabricas import BackofficeTestCase
 
 
 class SemFotosNoDisco:
@@ -48,9 +50,8 @@ class FigurasTests(TestCase):
             self.assertNotIn(",", figura.estilo)
 
 
-class CenaNaHomeTests(SemFotosNoDisco, TestCase):
+class CenaNaHomeTests(SemFotosNoDisco, BackofficeTestCase):
     def test_home_mostra_a_cena_com_as_figuras_dos_dois_lados(self):
-        criar_catalogo()
         html = self.client.get(reverse("loja:home")).content.decode()
         self.assertIn("data-cena", html)
         self.assertEqual(html.count('class="figura"'), 2 * FIGURAS_POR_LADO)
@@ -58,7 +59,6 @@ class CenaNaHomeTests(SemFotosNoDisco, TestCase):
         self.assertNotIn("data-cena-tempo", html)
 
     def test_cada_variante_gera_um_desenho_diferente(self):
-        criar_catalogo()
         html = self.client.get(reverse("loja:home")).content.decode()
         inicio = html.index("data-cena")
         desenhos = {
@@ -68,16 +68,16 @@ class CenaNaHomeTests(SemFotosNoDisco, TestCase):
         self.assertGreaterEqual(len(desenhos), 2 * VARIANTES)
 
     def test_sem_caes_e_gatos_a_cena_nao_aparece(self):
+        self.bo.produtos = [p for p in self.bo.produtos if p["animal"]["slug"] != "gatos"]
         resposta = self.client.get(reverse("loja:home"))
         self.assertNotContains(resposta, "data-cena")
 
     def test_montar_cena_usa_as_categorias_recebidas(self):
-        c = criar_catalogo()
-        cena = montar_cena(c["caes"], c["gatos"], quantidade=6)
+        cena = montar_cena(AnimalRef("caes", "Cães", "🐶"), AnimalRef("gatos", "Gatos", "🐱"), quantidade=6, fotos_caes=[], fotos_gatos=[])
         self.assertEqual((len(cena.figuras_caes), len(cena.figuras_gatos)), (6, 6))
 
 
-class FotosReaisTests(SemFotosNoDisco, TestCase):
+class FotosReaisTests(SemFotosNoDisco, BackofficeTestCase):
     def fotos(self, quantidade, animal="caes"):
         return [f"loja/cena/{animal}/{animal}-{i:02d}.webp" for i in range(quantidade)]
 
@@ -115,14 +115,12 @@ class FotosReaisTests(SemFotosNoDisco, TestCase):
         self.assertTrue(all(f.foto == "" for f in figuras))
 
     def test_home_usa_as_fotos_quando_existem(self):
-        criar_catalogo()
         with patch("loja.cena.listar_fotos", side_effect=lambda animal: self.fotos(FIGURAS_POR_LADO, animal)):
             html = self.client.get(reverse("loja:home")).content.decode()
         self.assertEqual(html.count('class="figura__foto"'), 2 * FIGURAS_POR_LADO)
         self.assertIn("loja/cena/gatos/gatos-00.webp", html)
 
     def test_home_sem_fotos_usa_os_desenhos(self):
-        criar_catalogo()
         html = self.client.get(reverse("loja:home")).content.decode()
         self.assertNotIn("figura__foto", html)
 

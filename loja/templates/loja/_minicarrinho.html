@@ -10,7 +10,7 @@
           <small>{{ linha.quantidade }} × R$ {{ p.preco_final|floatformat:"2g" }}</small>
           <strong>R$ {{ linha.subtotal|floatformat:"2g" }}</strong>
         </div>
-        <form method="post" action="{% url 'loja:carrinho_remover' p.pk %}" data-ajax-carrinho>
+        <form method="post" action="{% url 'loja:carrinho_remover' p.sku %}" data-ajax-carrinho>
           {% csrf_token %}
           <button class="icone-btn" type="submit" aria-label="Remover {{ p.nome }}">🗑</button>
         </form>

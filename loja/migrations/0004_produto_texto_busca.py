@@ -2,7 +2,12 @@
 
 from django.db import migrations, models
 
-from loja.texto import normalizar
+import unicodedata
+
+
+def normalizar(texto):
+    sem_acentos = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii")
+    return " ".join(sem_acentos.lower().split())
 
 
 def preencher_texto_busca(apps, schema_editor):
