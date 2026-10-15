@@ -1,0 +1,5 @@
+.abas { background: #fff; border-radius: var(--raio); box-shadow: var(--sombra); margin-bottom: 8px; }
+.abas__lista { display: flex; border-bottom: 2px solid var(--borda); }
+.abas__lista button { background: none; border: 0; padding: 14px 24px; font: inherit; font-weight: 800; color: var(--suave); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+.abas__lista button.is-ativo { color: var(--azul); border-bottom-color: var(--amarelo); }
+.abas__painel { padding: 20px 24px; }

@@ -6,6 +6,7 @@ from pathlib import Path
 from .logging_config import montar_logging
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 mimetypes.add_type("image/webp", ".webp")
 
@@ -50,7 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "loja.middleware.BackofficeIndisponivelMiddleware",
+    "loja.controllers.middleware.BackofficeIndisponivelMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -58,15 +59,15 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [FRONTEND_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "loja.context_processors.carrinho_resumo",
-                "loja.context_processors.navegacao",
+                "loja.presenters.context_processors.carrinho_resumo",
+                "loja.presenters.context_processors.navegacao",
             ],
         },
     },
@@ -132,6 +133,7 @@ FRETE_FIXO = Decimal("19.90")
 FRETE_GRATIS_ACIMA = Decimal("199.00")
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [FRONTEND_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"

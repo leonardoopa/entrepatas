@@ -1,0 +1,29 @@
+{% load static %}<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}EntrePatas — tudo para o seu pet{% endblock %}</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="{% static 'img/favicon.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+  <meta name="theme-color" content="#17375e">
+  {% include "layouts/estilos.html" %}
+  <script type="module" src="{% static 'js/main.js' %}"></script>
+</head>
+<body data-url-sugestoes="{% url 'loja:sugestoes' %}" data-url-minicarrinho="{% url 'loja:minicarrinho' %}">
+  {% include "layouts/cabecalho.html" %}
+
+  <main class="container">
+    {% if messages %}
+      <ul class="mensagens">
+        {% for m in messages %}<li class="mensagem mensagem--{{ m.tags }}">{{ m }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "layouts/rodape.html" %}
+
+  {% include "layouts/gaveta.html" %}
+</body>
+</html>

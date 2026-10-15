@@ -1,0 +1,28 @@
+{% load static %}
+<section class="cena" data-cena aria-labelledby="cena-titulo">
+  <div class="cena__palco">
+    <div class="cena__lado" aria-hidden="true">
+      {% for figura in cena.figuras_caes %}
+        <span class="figura" style="{{ figura.estilo }}"><span class="figura__corpo">{% if figura.foto %}<img class="figura__foto" src="{% static figura.foto %}" alt="" width="240" height="240" loading="lazy">{% else %}{% include "componentes/cena_cachorro.html" with v=figura.variante %}{% endif %}</span></span>
+      {% endfor %}
+    </div>
+    <div class="cena__lado" aria-hidden="true">
+      {% for figura in cena.figuras_gatos %}
+        <span class="figura" style="{{ figura.estilo }}"><span class="figura__corpo">{% if figura.foto %}<img class="figura__foto" src="{% static figura.foto %}" alt="" width="240" height="240" loading="lazy">{% else %}{% include "componentes/cena_gato.html" with v=figura.variante %}{% endif %}</span></span>
+      {% endfor %}
+    </div>
+    <div class="cena__centro">
+      <span class="cena__dica" aria-hidden="true">Role para baixo ↓</span>
+      <h2 id="cena-titulo">Tudo para cães e gatos</h2>
+      <p>A turma toda chegando para você.</p>
+      <a class="btn btn--grande cena__botao" href="{% url 'loja:busca' %}">Comprar agora</a>
+      <div class="cena__links">
+        <a href="{{ cena.caes.get_absolute_url }}">Só cães</a>
+        <a href="{{ cena.gatos.get_absolute_url }}">Só gatos</a>
+      </div>
+    </div>
+    <div class="cena__reprodutor" aria-hidden="true">
+      <span class="cena__trilho"><span class="cena__avanco"></span></span>
+    </div>
+  </div>
+</section>

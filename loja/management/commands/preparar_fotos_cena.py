@@ -4,7 +4,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from PIL import Image, ImageOps
 
-from loja.cena import EXTENSOES_FOTO, PASTA_FOTOS_NO_DISCO
+from loja.presenters.cena import EXTENSOES_FOTO, PASTA_FOTOS_NO_DISCO
 
 logger = logging.getLogger(__name__)
 

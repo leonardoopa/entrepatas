@@ -1,0 +1,12 @@
+.arte { display: block; }
+.arte .c { fill: var(--c); }
+.arte .sh { fill: #000; opacity: .16; }
+.arte .hi { fill: #fff; opacity: .3; }
+.arte .lb { fill: #fff; }
+.arte .nv { fill: var(--azul); }
+.arte .t1, .arte .t2 { fill: var(--azul); font-weight: 800; text-anchor: middle; font-family: system-ui, sans-serif; }
+.arte .t1 { font-size: 13px; }
+.arte .t2 { font-size: 10px; }
+
+.icone-animal { display: block; }
+.icone-animal--emoji { font-size: 1.6rem; line-height: 1; }

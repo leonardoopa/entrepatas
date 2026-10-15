@@ -1,0 +1,28 @@
+.migalhas { font-size: .88rem; color: var(--suave); margin-bottom: 8px; }
+.lista__cabecalho { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+.lista__total { margin: 0; color: var(--suave); }
+.lista__acoes { display: flex; align-items: center; gap: 12px; }
+.lista__filtrar { display: none; }
+.ordenar { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: .92rem; }
+
+.ordenar select { padding: 8px 12px; border: 2px solid var(--borda); border-radius: 999px; background: #fff; }
+.lista { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 28px; align-items: start; }
+.filtros { background: #fff; border-radius: var(--raio); padding: 8px 18px 18px; box-shadow: var(--sombra); position: sticky; top: 150px; max-height: calc(100vh - 170px); overflow-y: auto; }
+.filtros fieldset { border: 0; border-bottom: 1px solid var(--borda); padding: 12px 0; margin: 0; }
+.filtros legend { font-weight: 900; color: var(--azul); padding: 0; margin-bottom: 6px; float: left; width: 100%; }
+.filtros legend + * { clear: left; }
+.opcao { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; font-size: .93rem; }
+.opcao input { width: 18px; height: 18px; accent-color: var(--azul); }
+.filtros__acoes { padding-top: 14px; display: grid; gap: 10px; }
+.filtros__limpar { text-align: center; font-weight: 700; }
+.paginacao { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 28px; }
+.paginacao a, .paginacao span { min-width: 40px; text-align: center; padding: 8px 14px; border-radius: 999px; background: #fff; text-decoration: none; font-weight: 800; box-shadow: var(--sombra); }
+.paginacao a:hover { background: var(--amarelo); }
+.paginacao [aria-current] { background: var(--azul); color: #fff; }
+
+@media (max-width: 860px) {
+  .lista { grid-template-columns: minmax(0, 1fr); }
+  .lista__filtrar { display: inline-flex; }
+  .filtros { display: none; position: static; max-height: none; }
+  .filtros.is-aberto { display: block; }
+}

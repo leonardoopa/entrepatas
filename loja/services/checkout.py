@@ -6,11 +6,8 @@ from typing import Any
 
 from django.contrib.auth.models import AbstractBaseUser
 
-from loja.dominio import NovoPedido, PedidoCriado
-from loja.erros import (  # noqa: F401 — reexportados para quem usa o serviço
-    CarrinhoVazio, CheckoutError, CheckoutIndisponivel, ItemIndisponivel, PedidoRecusado,
-)
-from loja.portas import PedidosRepositorio
+from loja.models import CarrinhoVazio, CheckoutError, ItemIndisponivel, NovoPedido, PedidoCriado
+from loja.repositories.contratos import PedidosRepositorio
 
 from .carrinho import LinhaCarrinho
 from .resumo import ResumoCompra
