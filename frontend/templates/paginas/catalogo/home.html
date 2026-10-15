@@ -1,0 +1,49 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block content %}
+{% include "componentes/hero.html" %}
+
+<section class="animais" aria-label="Compre por animal">
+  {% for item in menu %}
+    <a class="animal" href="{{ item.categoria.get_absolute_url }}">
+      <span class="animal__icone">{% include "componentes/icone_animal.html" with c=item.categoria %}</span>
+      <span>{{ item.categoria.nome }}</span>
+    </a>
+  {% endfor %}
+</section>
+
+<section class="vantagens" aria-label="Vantagens">
+  <div><span>🚚</span><strong>Frete grátis</strong><small>acima de R$ {{ frete_gratis_acima|floatformat:"0g" }}</small></div>
+  <div><span>💳</span><strong>Até 10x sem juros</strong><small>no cartão de crédito</small></div>
+  <div><span>🔄</span><strong>Troca fácil</strong><small>em até 30 dias</small></div>
+  <div><span>🐾</span><strong>Feito por quem ama pets</strong><small>curadoria EntrePatas</small></div>
+</section>
+
+{% with vitrine=vitrines.ofertas %}{% if vitrine.itens %}{% url 'loja:ofertas' as url_ofertas %}{% include "componentes/carrossel.html" with titulo=vitrine.nome itens=vitrine.itens link=url_ofertas %}{% endif %}{% endwith %}
+
+{% if cena %}{% include "componentes/cena.html" %}{% endif %}
+
+{% with vitrine=vitrines.mais_vendidos %}{% if vitrine.itens %}{% url 'loja:busca' as url_todos %}{% include "componentes/carrossel.html" with titulo=vitrine.nome itens=vitrine.itens link=url_todos %}{% endif %}{% endwith %}
+
+{% with vitrine=vitrines.destaques %}{% if vitrine.itens %}{% include "componentes/carrossel.html" with titulo=vitrine.nome itens=vitrine.itens %}{% endif %}{% endwith %}
+
+<section class="secao">
+  <div class="secao__cab"><h2>Compre por departamento</h2></div>
+  <div class="chips">
+    {% for d in menu_departamentos %}<a class="chip" href="{{ d.get_absolute_url }}">{{ d.nome }}</a>{% endfor %}
+  </div>
+</section>
+
+{% for cat, itens in secoes_animais %}
+  {% include "componentes/carrossel.html" with titulo=cat.emoji|add:" Para "|add:cat.nome|lower itens=itens link=cat.get_absolute_url %}
+{% endfor %}
+
+{% if marcas %}
+<section class="secao">
+  <div class="secao__cab"><h2>Marcas favoritas</h2></div>
+  <div class="chips">
+    {% for m in marcas %}<a class="chip chip--marca" href="{% url 'loja:busca' %}?marca={{ m.slug }}">{{ m.nome }}</a>{% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

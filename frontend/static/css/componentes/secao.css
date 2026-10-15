@@ -1,0 +1,10 @@
+.secao { margin: 32px 0; }
+.secao__cab { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.secao__cab h2 { margin: 0; font-size: 1.5rem; }
+.secao__ver { font-weight: 800; text-decoration: none; }
+.secao__ver:hover { text-decoration: underline; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { background: #fff; border: 2px solid var(--borda); border-radius: 999px; padding: 8px 20px; font-weight: 700; text-decoration: none; transition: .15s; }
+.chip:hover { border-color: var(--amarelo); background: var(--amarelo); }
+.chip--marca { color: var(--azul); }

@@ -1,0 +1,10 @@
+.stepper { display: inline-flex; align-items: center; border: 2px solid var(--borda); border-radius: 999px; background: #fff; overflow: hidden; }
+.stepper button { width: 40px; height: 44px; border: 0; background: none; font-size: 1.3rem; font-weight: 800; cursor: pointer; color: var(--azul); }
+.stepper button:hover { background: var(--cinza); }
+.stepper input { width: 52px; border: 0; text-align: center; font: inherit; font-weight: 800; background: transparent; -moz-appearance: textfield; }
+.stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+@media (max-width: 860px) {
+  .stepper button { width: 34px; height: 38px; }
+  .stepper input { width: 40px; }
+}

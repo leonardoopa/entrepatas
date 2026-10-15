@@ -1,0 +1,23 @@
+.carrossel { position: relative; }
+.carrossel__pista { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 4px 2px 16px; }
+.carrossel__pista::-webkit-scrollbar { display: none; }
+.carrossel__item { flex: 0 0 calc((100% - 48px) / 4); scroll-snap-align: start; min-width: 0; }
+.carrossel__seta {
+  position: absolute; top: 38%; z-index: 5; width: 44px; height: 44px; border-radius: 50%; border: 0; background: #fff; color: var(--azul);
+  font-size: 1.8rem; line-height: 1; cursor: pointer; box-shadow: var(--sombra-2); transition: opacity .2s;
+}
+.carrossel__seta--ant { left: -14px; }
+.carrossel__seta--prox { right: -14px; }
+.carrossel__seta:disabled { opacity: 0; pointer-events: none; }
+
+@media (max-width: 1000px) {
+  .carrossel__item { flex-basis: calc((100% - 32px) / 3); }
+}
+
+@media (max-width: 860px) {
+  .carrossel__seta { display: none; }
+}
+
+@media (max-width: 600px) {
+  .carrossel__item { flex-basis: calc((100% - 16px) / 2); }
+}

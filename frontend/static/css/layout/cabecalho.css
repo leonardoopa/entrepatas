@@ -1,0 +1,64 @@
+.faixa { background: var(--amarelo); color: var(--azul); text-align: center; font-size: .85rem; font-weight: 700; padding: 6px 12px; }
+.topo { background: var(--azul); color: #fff; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0, 0, 0, .15); }
+.topo__linha { display: flex; align-items: center; gap: 18px; padding-top: 12px; padding-bottom: 12px; }
+.logo { display: flex; align-items: center; flex: none; text-decoration: none; }
+.logo img { display: block; height: 46px; width: auto; }
+.menu-btn { display: none; background: none; border: 0; color: #fff; font-size: 1.6rem; cursor: pointer; padding: 0 4px; }
+
+.busca { flex: 1; position: relative; display: flex; max-width: 640px; margin: 0 auto; }
+.busca input {
+  flex: 1; min-width: 0; padding: 12px 20px; border: 2px solid transparent; border-radius: 999px 0 0 999px;
+  font: inherit; font-size: 1rem; background: #fff; color: var(--texto);
+}
+.busca input:focus { outline: none; border-color: var(--amarelo); }
+.busca button { background: var(--amarelo); border: 0; padding: 0 20px; border-radius: 0 999px 999px 0; font-size: 1.1rem; cursor: pointer; }
+.sugestoes {
+  position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: #fff; color: var(--texto);
+  border-radius: var(--raio); box-shadow: var(--sombra-2); overflow: hidden; z-index: 60;
+}
+.sugestao { display: flex; align-items: center; gap: 12px; padding: 8px 14px; text-decoration: none; color: inherit; }
+.sugestao:hover, .sugestao.is-foco { background: var(--cinza); }
+.sugestao__arte { width: 44px; height: 44px; flex: none; border-radius: 10px; background: var(--cinza); padding: 4px; }
+.sugestao__nome { flex: 1; font-size: .92rem; font-weight: 600; line-height: 1.25; }
+.sugestao__nome small { display: block; color: var(--suave); font-weight: 500; }
+.sugestao__preco { font-weight: 800; color: var(--azul); white-space: nowrap; }
+.sugestoes__todos { display: block; text-align: center; padding: 10px; background: var(--cinza); font-weight: 800; text-decoration: none; }
+.sugestoes__vazio { padding: 14px; color: var(--suave); }
+
+.conta-menu { position: relative; }
+.conta-link { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-weight: 800; white-space: nowrap; line-height: 1.15; }
+.conta-link__icone { font-size: 1.5rem; }
+.conta-link .rotulo { display: flex; flex-direction: column; font-size: .9rem; }
+.conta-link small { font-weight: 500; opacity: .85; font-size: .75rem; }
+.conta-menu__painel {
+  display: none; position: absolute; right: 0; top: 100%; min-width: 180px; background: #fff; border-radius: var(--raio);
+  box-shadow: var(--sombra-2); padding: 8px; z-index: 80;
+}
+.conta-menu:hover .conta-menu__painel, .conta-menu:focus-within .conta-menu__painel { display: block; }
+.conta-menu__painel a, .conta-menu__painel button {
+  display: block; width: 100%; text-align: left; padding: 10px 14px; border: 0; background: none; border-radius: 10px;
+  color: var(--texto); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+}
+.conta-menu__painel a:hover, .conta-menu__painel button:hover { background: var(--cinza); color: var(--azul); }
+.carrinho-link { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-weight: 800; white-space: nowrap; }
+.carrinho-link__icone { position: relative; font-size: 1.6rem; line-height: 1; }
+.badge {
+  position: absolute; top: -8px; right: -10px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+  background: var(--amarelo); color: var(--azul); font-size: .75rem; font-weight: 900; line-height: 20px; text-align: center;
+}
+.badge.pulo { animation: pulo .45s; }
+@keyframes pulo { 40% { transform: scale(1.5); } }
+
+@media (max-width: 860px) {
+  .menu-btn { display: block; }
+  .topo__linha { flex-wrap: wrap; gap: 10px 14px; }
+  .busca { order: 5; flex-basis: 100%; max-width: none; }
+  .logo { margin-right: auto; }
+  .logo img { height: 38px; }
+  .carrinho-link .rotulo { display: none; }
+  .conta-link .rotulo { display: none; }
+}
+
+@media (max-width: 600px) {
+  .faixa { font-size: .75rem; }
+}

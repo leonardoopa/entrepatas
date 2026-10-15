@@ -6,4 +6,4 @@ class LojaConfig(AppConfig):
     name = "loja"
 
     def ready(self):
-        from . import signals  # noqa: F401
+        from .controllers import signals  # noqa: F401

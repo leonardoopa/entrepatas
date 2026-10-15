@@ -1,0 +1,36 @@
+{% load static %}
+<div class="faixa">🚚 Frete grátis em compras acima de R$ {{ frete_gratis_acima|floatformat:"0g" }} &nbsp;·&nbsp; 💳 Parcele em até 10x sem juros</div>
+
+<header class="topo">
+  <div class="container topo__linha">
+    <button class="menu-btn" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-toggle>☰</button>
+    <a class="logo" href="{% url 'loja:home' %}" aria-label="EntrePatas, página inicial"><img src="{% static 'img/logo.png' %}" alt="EntrePatas" width="619" height="193"></a>
+    <form class="busca" role="search" action="{% url 'loja:busca' %}" method="get">
+      <input type="search" name="q" value="{{ termo|default:'' }}" placeholder="O que seu pet precisa?" aria-label="Buscar produtos" autocomplete="off" data-busca>
+      <button type="submit" aria-label="Buscar">🔍</button>
+      <div class="sugestoes" data-sugestoes hidden></div>
+    </form>
+    {% if user.is_authenticated %}
+      <div class="conta-menu">
+        <a class="conta-link" href="{% url 'loja:conta' %}">
+          <span class="conta-link__icone">👤</span>
+          <span class="rotulo"><small>Olá,</small> {{ user.first_name|default:"cliente" }}</span>
+        </a>
+        <div class="conta-menu__painel">
+          <a href="{% url 'loja:conta' %}">Meus pedidos</a>
+          <form method="post" action="{% url 'loja:sair' %}">{% csrf_token %}<button type="submit">Sair</button></form>
+        </div>
+      </div>
+    {% else %}
+      <a class="conta-link" href="{% url 'loja:entrar' %}">
+        <span class="conta-link__icone">👤</span>
+        <span class="rotulo"><small>Entrar</small> Cadastre-se</span>
+      </a>
+    {% endif %}
+    <a class="carrinho-link" href="{% url 'loja:carrinho' %}" data-abrir-carrinho aria-label="Abrir carrinho">
+      <span class="carrinho-link__icone">🛒<span class="badge" data-carrinho-qtd{% if not carrinho_qtd %} hidden{% endif %}>{{ carrinho_qtd }}</span></span>
+      <span class="rotulo">Carrinho</span>
+    </a>
+  </div>
+  {% include "layouts/menu.html" %}
+</header>

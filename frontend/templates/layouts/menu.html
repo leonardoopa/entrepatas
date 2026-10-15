@@ -1,0 +1,35 @@
+<nav class="menu" data-menu aria-label="Categorias">
+  <ul class="container menu__linha">
+    {% for item in menu %}
+      <li class="menu__item" data-animal="{{ item.categoria.slug }}">
+        <a href="{{ item.categoria.get_absolute_url }}">
+          <span class="menu__icone">{% include "componentes/icone_animal.html" with c=item.categoria %}</span>
+          <span class="menu__nome">{{ item.categoria.nome }}</span>
+        </a>
+        {% if item.departamentos %}
+          <div class="mega">
+            <ul>
+              {% for entrada in item.departamentos %}
+                {% with d=entrada.departamento %}
+                <li class="mega__dep{% if entrada.subdepartamentos|length > 1 %} mega__dep--com-sub{% endif %}">
+                  <a href="{{ item.categoria.get_absolute_url }}?depto={{ d.slug }}">{{ d.nome }}</a>
+                  {% if entrada.subdepartamentos|length > 1 %}
+                    <ul class="mega__sub">
+                      {% for sub in entrada.subdepartamentos %}
+                        <li><a href="{{ item.categoria.get_absolute_url }}?depto={{ d.slug }}&amp;sub={{ sub.slug }}">{{ sub.nome }}</a></li>
+                      {% endfor %}
+                      <li class="mega__ver"><a href="{{ item.categoria.get_absolute_url }}?depto={{ d.slug }}">Ver tudo em {{ d.nome|lower }}</a></li>
+                    </ul>
+                  {% endif %}
+                </li>
+                {% endwith %}
+              {% endfor %}
+              <li class="mega__ver"><a href="{{ item.categoria.get_absolute_url }}">Ver tudo para {{ item.categoria.nome|lower }}</a></li>
+            </ul>
+          </div>
+        {% endif %}
+      </li>
+    {% endfor %}
+    <li class="menu__item menu__item--ofertas"><a href="{% url 'loja:ofertas' %}">🔥 Ofertas</a></li>
+  </ul>
+</nav>

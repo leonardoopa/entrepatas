@@ -1,0 +1,27 @@
+{% load static %}
+<footer class="rodape">
+  <div class="container rodape__grade">
+    <div>
+      <a class="logo logo--rodape" href="{% url 'loja:home' %}" aria-label="EntrePatas, página inicial"><img src="{% static 'img/logo.png' %}" alt="EntrePatas" width="619" height="193" loading="lazy"></a>
+      <p>Tudo para o seu pet, com carinho.</p>
+      <p class="rodape__aviso">Loja de demonstração. Produtos, marcas e avaliações são fictícios.</p>
+    </div>
+    <div>
+      <h3>Compre por animal</h3>
+      <ul>{% for item in menu %}<li><a href="{{ item.categoria.get_absolute_url }}">{{ item.categoria.nome }}</a></li>{% endfor %}</ul>
+    </div>
+    <div>
+      <h3>Departamentos</h3>
+      <ul>{% for d in menu_departamentos %}<li><a href="{{ d.get_absolute_url }}">{{ d.nome }}</a></li>{% endfor %}</ul>
+    </div>
+    <div>
+      <h3>Vantagens</h3>
+      <ul>
+        <li>Frete grátis acima de R$ {{ frete_gratis_acima|floatformat:"0g" }}</li>
+        <li>Até 10x sem juros</li>
+        <li><a href="{% url 'loja:ofertas' %}">Ofertas da semana</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="rodape__fim">© EntrePatas</div>
+</footer>

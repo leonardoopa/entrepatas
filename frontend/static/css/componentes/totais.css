@@ -1,0 +1,12 @@
+.totais { margin: 0 0 16px; display: grid; gap: 8px; }
+.totais > div { display: flex; justify-content: space-between; }
+.totais dt { color: var(--suave); }
+.totais dd { margin: 0; font-weight: 800; }
+.totais__total { border-top: 2px solid var(--borda); padding-top: 10px; font-size: 1.25rem; }
+.totais__total dt { color: var(--azul); font-weight: 900; }
+.totais__total dd { color: var(--azul); }
+.frete-barra { background: #fff; border-radius: var(--raio); padding: 12px 16px; margin-bottom: 14px; box-shadow: var(--sombra); }
+.frete-barra p { margin: 0 0 8px; font-size: .92rem; }
+.frete-barra__trilho { height: 10px; border-radius: 999px; background: var(--borda); overflow: hidden; }
+.frete-barra__preench { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--amarelo), #f59f00); transition: width .5s; }
+.frete-barra--ok .frete-barra__preench { background: var(--verde); }
