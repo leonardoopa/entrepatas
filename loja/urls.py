@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import carrinho, catalogo, checkout, contas
+from .controllers import carrinho, catalogo, checkout, contas
 
 app_name = "loja"
 

@@ -1,0 +1,27 @@
+.detalhe { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 36px; margin-bottom: 32px; }
+.detalhe__arte { position: relative; aspect-ratio: 1 / 1; padding: 36px; border-radius: 24px; background: radial-gradient(circle at 50% 38%, #fff 0%, var(--cinza) 100%); box-shadow: var(--sombra); }
+.detalhe__arte > .arte, .detalhe__arte > img { width: 100%; height: 100%; object-fit: contain; }
+.detalhe__info h1 { font-size: 2rem; }
+.comprar { display: flex; flex-wrap: wrap; gap: 14px; margin: 18px 0 8px; align-items: center; }
+
+.aviso-estoque { color: var(--vermelho); font-weight: 800; margin: 4px 0 0; }
+.beneficios { list-style: none; padding: 14px 0 0; margin: 14px 0 0; border-top: 1px solid var(--borda); display: grid; gap: 6px; color: var(--suave); }
+
+.ficha { display: grid; gap: 8px; margin: 0; }
+.ficha div { display: flex; gap: 12px; border-bottom: 1px dashed var(--borda); padding-bottom: 8px; }
+.ficha dt { width: 140px; color: var(--suave); font-weight: 700; }
+.ficha dd { margin: 0; font-weight: 700; }
+
+.variacoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 14px; }
+.variacao {
+  display: flex; flex-direction: column; align-items: center; min-width: 84px; padding: 8px 16px; border: 2px solid var(--borda);
+  border-radius: 14px; background: #fff; color: var(--azul); font-weight: 800; text-decoration: none; transition: border-color .15s, background .15s;
+}
+.variacao small { color: var(--suave); font-weight: 600; font-size: .75rem; }
+.variacao:hover { border-color: var(--amarelo); }
+.variacao--ativa { border-color: var(--azul); background: #eef2f9; }
+.variacao--esgotada { opacity: .55; text-decoration: line-through; }
+
+@media (max-width: 860px) {
+  .detalhe { grid-template-columns: minmax(0, 1fr); }
+}

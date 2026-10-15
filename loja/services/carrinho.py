@@ -3,8 +3,8 @@ from collections.abc import MutableMapping
 from dataclasses import dataclass
 from decimal import Decimal
 
-from loja.dominio import ProdutoCatalogo
-from loja.portas import CatalogoRepositorio
+from loja.models import ProdutoCatalogo
+from loja.repositories.contratos import CatalogoRepositorio
 
 logger = logging.getLogger(__name__)
 

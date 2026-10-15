@@ -1,0 +1,54 @@
+<section class="hero" data-hero aria-roledescription="carrossel" aria-label="Destaques">
+  <div class="hero__slides">
+    <div class="hero__trilho">
+      <article class="hero__slide hero__slide--azul is-ativo">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Ofertas da semana</span>
+          <h1>Até 25% off em rações e petiscos</h1>
+          <p>Escolha o melhor para o seu melhor amigo e pague em até 10x sem juros.</p>
+          <a class="btn btn--grande" href="{% url 'loja:ofertas' %}">Ver ofertas</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">🐶<span>🐱</span></div>
+      </article>
+      <article class="hero__slide hero__slide--amarelo">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Frete grátis</span>
+          <h2>Compras acima de R$ {{ frete_gratis_acima|floatformat:"0g" }} chegam sem custo</h2>
+          <p>Monte o carrinho e acompanhe quanto falta para ganhar o frete.</p>
+          <a class="btn btn--grande btn--escuro" href="{% url 'loja:busca' %}">Ver todos os produtos</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">📦<span>🚚</span></div>
+      </article>
+      <article class="hero__slide hero__slide--roxo">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Para os gatinhos</span>
+          <h2>Areia, ração e arranhadores para o seu gato</h2>
+          <p>Tudo para a rotina de quem manda na casa.</p>
+          <a class="btn btn--grande" href="{% url 'loja:categoria' 'gatos' %}">Ver para gatos</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">😺<span>🧶</span></div>
+      </article>
+      <article class="hero__slide hero__slide--rosa">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Hora de brincar</span>
+          <h2>Brinquedos para gastar energia</h2>
+          <p>Bolinhas, mordedores e pelúcias para todos os tamanhos.</p>
+          <a class="btn btn--grande" href="{% url 'loja:departamento' 'brinquedos' %}">Ver brinquedos</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">🎾<span>🦴</span></div>
+      </article>
+      <article class="hero__slide hero__slide--verde">
+        <div class="hero__texto">
+          <span class="hero__etiqueta">Saúde e bem-estar</span>
+          <h2>Farmácia e higiene para o seu pet</h2>
+          <p>Antipulgas, vermífugos, shampoos e muito mais em um só lugar.</p>
+          <a class="btn btn--grande" href="{% url 'loja:departamento' 'farmacia' %}">Ver farmácia</a>
+        </div>
+        <div class="hero__arte" aria-hidden="true">💊<span>🛁</span></div>
+      </article>
+    </div>
+  </div>
+  <button type="button" class="hero__seta hero__seta--ant" data-dir="-1" aria-label="Slide anterior">‹</button>
+  <button type="button" class="hero__seta hero__seta--prox" data-dir="1" aria-label="Próximo slide">›</button>
+  <div class="hero__pontos" role="tablist"></div>
+</section>

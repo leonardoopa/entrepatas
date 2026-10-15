@@ -1,7 +1,7 @@
 from django.core import mail
 from django.urls import reverse
 
-from .fabricas import DADOS_ENTREGA, BackofficeTestCase, criar_usuario
+from .support.fabricas import DADOS_ENTREGA, BackofficeTestCase, criar_usuario
 
 
 class LogsTests(BackofficeTestCase):
@@ -24,7 +24,7 @@ class LogsTests(BackofficeTestCase):
         self.assertIn("carrinho_produto_sem_estoque sku=OSS-1", logs.output[0])
 
     def test_produto_adicionado(self):
-        with self.assertLogs("loja.views.carrinho", "INFO") as logs:
+        with self.assertLogs("loja.controllers.carrinho", "INFO") as logs:
             self.client.post(reverse("loja:carrinho_adicionar", args=["BOL-1"]), {"quantidade": 2})
         self.assertIn("carrinho_produto_adicionado sku=BOL-1 quantidade=2", logs.output[0])
 
@@ -33,11 +33,11 @@ class LogsTests(BackofficeTestCase):
 
         import requests
 
-        from loja.backoffice.cliente import ClienteBackoffice
+        from loja.repositories.backoffice.cliente import ClienteBackoffice
 
         cliente = ClienteBackoffice("http://bo/api/v1", "chave-secreta")
         with patch.object(cliente.sessao, "request", side_effect=requests.ConnectionError("x")):
-            with self.assertLogs("loja.backoffice.cliente", "WARNING") as logs:
+            with self.assertLogs("loja.repositories.backoffice.cliente", "WARNING") as logs:
                 with self.assertRaises(Exception):
                     cliente.get("vitrines/")
         self.assertIn("backoffice_inacessivel", logs.output[0])
@@ -45,7 +45,7 @@ class LogsTests(BackofficeTestCase):
 
     def test_site_sem_backoffice_registra_erro(self):
         self.bo.indisponivel = True
-        with self.assertLogs("loja.middleware", "ERROR") as logs:
+        with self.assertLogs("loja.controllers.middleware", "ERROR") as logs:
             self.client.get(reverse("loja:busca"))
         self.assertIn("site_sem_backoffice caminho=/busca/", logs.output[0])
 
@@ -62,7 +62,7 @@ class LogsTests(BackofficeTestCase):
 
     def test_login_falho_nao_registra_credenciais(self):
         criar_usuario()
-        with self.assertLogs("loja.signals", "WARNING") as logs:
+        with self.assertLogs("loja.controllers.signals", "WARNING") as logs:
             self.client.post(reverse("loja:entrar"), {"username": "ana@example.com", "password": "errada!Senha1"})
         self.assertIn("login_falhou", logs.output[0])
         self.assertNotIn("ana@example.com", logs.output[0])
@@ -70,7 +70,7 @@ class LogsTests(BackofficeTestCase):
 
     def test_recuperacao_de_senha_nao_registra_email(self):
         criar_usuario()
-        with self.assertLogs("loja.views.contas", "INFO") as logs:
+        with self.assertLogs("loja.controllers.contas", "INFO") as logs:
             self.client.post(reverse("loja:senha_recuperar"), {"email": "ana@example.com"})
         self.assertIn("recuperacao_senha_solicitada", logs.output[0])
         self.assertNotIn("ana@example.com", logs.output[0])

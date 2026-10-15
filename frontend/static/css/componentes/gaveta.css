@@ -1,0 +1,19 @@
+.gaveta-fundo { position: fixed; inset: 0; background: rgba(16, 40, 73, .5); z-index: 90; animation: aparecer .2s; }
+.gaveta {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100%); background: var(--creme); z-index: 100;
+  display: flex; flex-direction: column; transform: translateX(100%); transition: transform .3s; box-shadow: -10px 0 30px rgba(0, 0, 0, .2);
+}
+.gaveta.is-aberta { transform: translateX(0); }
+.gaveta__cab { display: flex; justify-content: space-between; align-items: center; background: var(--azul); color: #fff; padding: 14px 18px; }
+.gaveta__cab h2 { color: #fff; margin: 0; }
+.gaveta__fechar { background: none; border: 0; color: #fff; font-size: 1.3rem; cursor: pointer; }
+.gaveta__corpo { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; }
+.mini { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 10px; }
+.mini__item { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; background: #fff; border-radius: 12px; padding: 10px; }
+.mini__arte { width: 64px; height: 64px; background: var(--cinza); border-radius: 10px; padding: 4px; }
+.mini__info { display: grid; gap: 2px; font-size: .9rem; }
+.mini__info a { font-weight: 700; text-decoration: none; line-height: 1.25; }
+.mini__info small { color: var(--suave); }
+.mini__info strong { color: var(--azul); }
+.mini__rodape { margin-top: auto; background: #fff; border-radius: 14px; padding: 14px; display: grid; gap: 10px; }
+.mini__rodape .totais { margin: 0; }

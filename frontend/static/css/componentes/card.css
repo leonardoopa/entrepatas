@@ -1,0 +1,43 @@
+.grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.card {
+  position: relative; display: flex; flex-direction: column; height: 100%; background: #fff; border-radius: var(--raio);
+  overflow: hidden; box-shadow: var(--sombra); transition: transform .2s, box-shadow .2s;
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--sombra-2); }
+.card__img {
+  position: relative; display: block; aspect-ratio: 1 / 1; padding: 14px;
+  background: radial-gradient(circle at 50% 38%, #fff 0%, var(--cinza) 100%);
+}
+.card__img > img, .card__img > .arte { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.card__img > .arte { object-fit: contain; }
+.card:hover .card__img > .arte { transform: scale(1.06) rotate(-1.5deg); }
+.selo {
+  position: absolute; top: 10px; left: 10px; background: var(--vermelho); color: #fff; font-size: .8rem; font-weight: 900;
+  border-radius: 999px; padding: 3px 10px; box-shadow: var(--sombra);
+}
+.selo--grande { font-size: 1rem; padding: 5px 14px; top: 16px; left: 16px; }
+.card__corpo { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px 14px; flex: 1; }
+.card__marca { font-size: .75rem; font-weight: 800; text-transform: uppercase; color: var(--suave); letter-spacing: .06em; text-decoration: none; }
+.card__nome { color: var(--texto); text-decoration: none; font-weight: 700; line-height: 1.3; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card__nome:hover { color: var(--azul); text-decoration: underline; }
+.avaliacao { display: flex; align-items: center; gap: 6px; color: var(--suave); }
+.estrelas {
+  --p: 100%; font-size: 1rem; letter-spacing: 1px; line-height: 1; color: transparent;
+  background: linear-gradient(90deg, var(--amarelo) var(--p), #d9d2c0 var(--p)); -webkit-background-clip: text; background-clip: text;
+}
+.estrelas--grande { font-size: 1.3rem; }
+.preco { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-top: 4px; }
+.preco s { color: var(--suave); font-size: .9rem; }
+.preco strong { font-size: 1.35rem; color: var(--azul); }
+.preco--grande strong { font-size: 2.3rem; }
+.preco--grande s { font-size: 1.05rem; }
+.parcela { color: var(--suave); font-size: .82rem; }
+.parcela--grande { font-size: 1rem; margin: 0 0 14px; }
+.card form { margin-top: 8px; }
+.esgotado { color: var(--vermelho); font-weight: 800; margin-top: 8px; }
+.esgotado--grande { font-size: 1.15rem; }
+
+@media (max-width: 600px) {
+  .grade { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .preco--grande strong { font-size: 1.9rem; }
+}

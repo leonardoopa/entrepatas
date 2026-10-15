@@ -17,26 +17,53 @@ Navegador ──► Site (Django) ──► API do backoffice (Bearer) ──►
 - Contas de cliente: cadastro, login com e-mail e senha, recuperação de senha por e-mail e "Meus pedidos" (lidos do backoffice)
 - Página de manutenção (503) quando o backoffice está fora e não há cache
 
-## Arquitetura
+## Arquitetura (MVC)
+
+O projeto separa o **back-end** (`loja/` e `config/`, só Python) do **front-end** (`frontend/`, só templates, CSS, JavaScript e imagens).
 
 ```
-loja/
-  portas.py        contratos (Protocol) de catálogo e pedidos: o que o site precisa, não de onde vem
-  dominio.py       dataclasses do site (produto, vitrine, pedido), sem Django
-  backoffice/      adaptador das portas: cliente HTTP, mapeamento JSON para domínio, cache, erros
-  selectors/       leitura do catálogo para as views (filtros, menu, escopo)
-  services/        carrinho (na sessão), frete, resumo, checkout, contas
-  views/           camada HTTP fina: lê a requisição, chama services/selectors, devolve a resposta
-  middleware.py    transforma "backoffice fora do ar" na página 503
-  forms.py         validação de entrada
-  signals.py       logs de autenticação
-  templates/, static/loja/js/   interface (JavaScript em módulos, sem bibliotecas)
-config/            settings e configuração de logs
+config/                    settings, urls raiz e configuração de logs
+loja/                      back-end
+  models/                  M: entidades do domínio (dataclasses) e erros de negócio, sem HTTP
+  repositories/            M: acesso a dados
+    contratos.py           contratos (Protocol) de catálogo e pedidos
+    backoffice/            implementação: cliente HTTP, mapeamento JSON para models, cache, erros
+    fabrica.py             monta os repositórios (obter_catalogo, obter_pedidos)
+  services/                M: regras de negócio (carrinho, frete, resumo, checkout, contas, consulta do catálogo)
+  controllers/             C: recebem a requisição, chamam services e repositories, escolhem o template
+    forms.py               validação da entrada
+    middleware.py          "backoffice fora do ar" vira a página 503
+    signals.py             logs de autenticação
+  presenters/              dados prontos para a tela (cena da home, menu e contador do carrinho)
+  urls.py                  rotas da loja
+  tests/                   espelha as camadas: controllers/, services/, repositories/, presenters/, support/
+frontend/                  V: tudo o que o navegador recebe
+  templates/
+    layouts/               base, cabeçalho, menu, rodapé, gaveta do carrinho
+    componentes/           peças reutilizáveis (card, carrossel, hero, cena, totais...)
+    paginas/               uma pasta por área: catalogo, carrinho, checkout, contas, erros
+    emails/                texto dos e-mails
+  static/
+    css/                   base.css, layout/, componentes/, paginas/
+    js/                    main.js, nucleo/ (utilidades), componentes/, paginas/
+    img/                   logotipo, ícones e fotos da cena
 ```
 
-Regras de dependência: `views` dependem de `services` e `selectors`; estes dependem das **portas**, nunca de `requests`. Só `loja/backoffice/` conhece HTTP e JSON.
+Regras de dependência (a seta aponta para quem é usado):
 
-- **Inversão de dependência:** trocar o backoffice por outra fonte é escrever outro adaptador das portas; views e services não mudam.
+```
+controllers -> services -> repositories -> models
+controllers -> presenters -> services, repositories, models
+repositories/backoffice implementa repositories/contratos
+templates recebem o contexto pronto de controllers e presenters
+```
+
+- `models` não importa nada do projeto. `services` e `controllers` nunca falam com `requests`: só `repositories/backoffice/` conhece HTTP e JSON.
+- Controllers e presenters pedem dados por `from loja.repositories import obter_catalogo, obter_pedidos`; não importam o adaptador.
+- Nenhum service conhece `request`, `HttpResponse` ou templates. A leitura do `QueryDict` (filtros da listagem) fica no controller.
+- Template não consulta nada: recebe tudo do controller ou dos presenters (`context_processors`).
+- Cada CSS e cada JavaScript pertence a um componente ou a uma página, e as media queries ficam junto do componente. Para um estilo novo, crie o arquivo e liste-o em `frontend/templates/layouts/estilos.html`.
+- **Inversão de dependência:** trocar o backoffice por outra fonte é escrever outra implementação dos contratos; controllers e services não mudam.
 - **Aberto/fechado:** o frete é uma `PoliticaFrete` injetada em `montar_resumo` e `finalizar_pedido`.
 - **Preço sempre do backoffice:** o site envia SKU e quantidade; o backoffice calcula o preço de cada item.
 - **Pedido idempotente:** o número do pedido é gerado e guardado na sessão antes de chamar o backoffice. Se a resposta se perder, repetir o envio devolve o mesmo pedido, sem baixar o estoque duas vezes.
@@ -46,7 +73,7 @@ Regras de dependência: `views` dependem de `services` e `selectors`; estes depe
 
 Respostas de catálogo ficam em cache por 30 segundos (`BACKOFFICE_CACHE_SEGUNDOS`), então uma mudança de preço no backoffice aparece no site em até 30 segundos. Cada resposta também fica guardada por 1 hora: se o backoffice cair, o site continua servindo a última versão conhecida (log `catalogo_servido_do_cache_antigo`). Sem cache, a página mostra o aviso de manutenção com `503` e `Retry-After`. Leituras tentam de novo em caso de falha de rede; o envio de pedido não tenta de novo sozinho.
 
-- **Testes:** `loja/tests/` tem um módulo por área. Os testes usam um `BackofficeFalso` que imita a API em memória; `loja/tests/contrato/*.json` guarda respostas reais da API para garantir que o mapeamento continua válido.
+- **Testes:** `loja/tests/` espelha as camadas. Os testes usam um `BackofficeFalso` (`tests/support/fabricas.py`) que imita a API em memória; `tests/repositories/contrato/*.json` guarda respostas reais da API para garantir que o mapeamento continua válido.
 
 ## Fotos reais na cena da home
 
@@ -60,7 +87,7 @@ docker compose exec web python manage.py preparar_fotos_cena fotos-originais/cae
 docker compose exec web python manage.py preparar_fotos_cena fotos-originais/gatos gatos
 ```
 
-As fotos vão para `loja/static/loja/cena/<animal>/` e aparecem na home como adesivos redondos. Com menos de 6 fotos de um lado, esse lado continua com os desenhos.
+As fotos vão para `frontend/static/img/cena/<animal>/` e aparecem na home como adesivos redondos. Com menos de 6 fotos de um lado, esse lado continua com os desenhos.
 
 ## Logs
 
@@ -149,4 +176,4 @@ Usa SQLite (`db.sqlite3`) para contas e sessões quando `POSTGRES_DB` não está
 
 ## Identidade visual
 
-Azul `#17375E`, amarelo `#F2B544`, creme `#FFF9EE`. Os arquivos do logotipo ficam em `loja/static/loja/` (`logo.png` para fundo azul, `icone.png`, `favicon.png`, `apple-touch-icon.png`).
+Azul `#17375E`, amarelo `#F2B544`, creme `#FFF9EE`. Os arquivos do logotipo ficam em `frontend/static/img/` (`logo.png` para fundo azul, `icone.png`, `favicon.png`, `apple-touch-icon.png`).
